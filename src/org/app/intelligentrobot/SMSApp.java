@@ -22,6 +22,7 @@ public class SMSApp extends Application {
 			public void onServiceConnected(ComponentName className, IBinder service) 
 	        {
 				teleService = ((SMSService.LocalBinder)service).getService();
+				
 	        }
 
 	        public void onServiceDisconnected(ComponentName className) 

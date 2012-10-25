@@ -34,6 +34,8 @@ public class SMSService extends Service {
 
 	public static abstract class ServiceHandler extends Handler {
 		public static final int ID_Message_STATE = 2012;
+		public static final int ID_LEARNING = 2013;
+		public static final int ID_SUBSTITUTE = 2014;
 
 		public void handleMessage(Message msg) {
 
@@ -46,11 +48,27 @@ public class SMSService extends Service {
 			switch (msg.what) {
 			case ID_Message_STATE:
 				onProcessState(msg);
+
+				break;
+			case ID_LEARNING:
+
+				break;
+			case ID_SUBSTITUTE:
+
 				break;
 			default:
 				defaultMessageProcess(msg);
+
 				break;
 			}
+		}
+
+		private void changeToLearn() {
+
+		}
+
+		private void changeToSubstitute() {
+
 		}
 
 		private void onProcessState(Message msg) {
@@ -87,14 +105,13 @@ public class SMSService extends Service {
 
 			@Override
 			protected Long doInBackground(Void... params) {
-				//拷贝已发送短信内容
+				// 拷贝已发送短信内容
 				copySendSMS();
-				//初始化关键词库
-				
+				// 初始化关键词库
+
 				return null;
 			}
 
-			
 		}.execute();
 	}
 
@@ -155,54 +172,57 @@ public class SMSService extends Service {
 	}
 
 	public void saveReceiveSMS(String sender, String content, String sendtime) {
-		if(mLocalDataHelper==null) {
+		if (mLocalDataHelper == null) {
 			mLocalDataHelper = new LocalDataHelper(context);
 		}
 		mLocalDataHelper.saveReceiveSMS(sender, content, sendtime);
 	}
-	
+
 	private ArrayList<Sms> loadSendSMS() {
 		ArrayList<Sms> list = null;
-		 Cursor smsCursor = context.getContentResolver().query(SMS_URI,
-	        		new String[] { "_id", "address", "person", "date", "read","type", "body" },
-	        		null, null, null);
-		 if( smsCursor != null ) {
-			    int addressIndex = smsCursor.getColumnIndex("address");
-		        int bodyIndex = smsCursor.getColumnIndex("body");
-		        int typeIndex = smsCursor.getColumnIndex("type");
-			    if(list==null) {
-			    	list = new ArrayList<Sms>();
-			    }
-			    for(smsCursor.moveToFirst();!smsCursor.isAfterLast();smsCursor.moveToNext()) {
-			    	//1.接收到的消息，2.发出去的消息  
-			   		String number = smsCursor.getString(addressIndex);
-			   		String body = smsCursor.getString(bodyIndex);
-			   		String type = smsCursor.getString(typeIndex);
-		    		if("2".equals(type)) {
-		    			Sms SMS = new Sms();
-				   		SMS.setPnum(number);
-						SMS.setContent(body);
-						list.add(SMS);
-		    		}
-		    		
-			    }
-		 }
-		 return list;
+		Cursor smsCursor = context.getContentResolver().query(
+				SMS_URI,
+				new String[] { "_id", "address", "person", "date", "read",
+						"type", "body" }, null, null, null);
+		if (smsCursor != null) {
+			int addressIndex = smsCursor.getColumnIndex("address");
+			int bodyIndex = smsCursor.getColumnIndex("body");
+			int typeIndex = smsCursor.getColumnIndex("type");
+			if (list == null) {
+				list = new ArrayList<Sms>();
+			}
+			for (smsCursor.moveToFirst(); !smsCursor.isAfterLast(); smsCursor
+					.moveToNext()) {
+				// 1.接收到的消息，2.发出去的消息
+				String number = smsCursor.getString(addressIndex);
+				String body = smsCursor.getString(bodyIndex);
+				String type = smsCursor.getString(typeIndex);
+				if ("2".equals(type)) {
+					Sms SMS = new Sms();
+					SMS.setPnum(number);
+					SMS.setContent(body);
+					list.add(SMS);
+				}
+
+			}
+		}
+		return list;
 	}
 
 	public void updateSendSMS() {
-		if(mLocalDataHelper==null) {
+		if (mLocalDataHelper == null) {
 			mLocalDataHelper = new LocalDataHelper(context);
 		}
-		
+
 		mLocalDataHelper.updateSendSMS(loadSendSMS());
-		
+
 	}
+
 	private void copySendSMS() {
 		Log.i(TAG, "copySendSMS is running");
-		if(mLocalDataHelper==null) {
+		if (mLocalDataHelper == null) {
 			mLocalDataHelper = new LocalDataHelper(context);
 		}
-		 mLocalDataHelper.addSendSMS(loadSendSMS());
+		mLocalDataHelper.addSendSMS(loadSendSMS());
 	}
 }
