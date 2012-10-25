@@ -89,6 +89,7 @@ public class SMSService extends Service {
 			protected Long doInBackground(Void... params) {
 				//拷贝已发送短信内容
 				copySendSMS();
+				//初始化关键词库
 				
 				return null;
 			}

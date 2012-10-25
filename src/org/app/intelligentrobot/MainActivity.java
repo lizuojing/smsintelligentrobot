@@ -1,5 +1,6 @@
 package org.app.intelligentrobot;
 
+import org.app.intelligentrobot.data.SettingLoader;
 import org.app.intelligentrobot.utils.Utils;
 
 import android.app.Activity;
@@ -36,10 +37,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.button1:
 			//学习模式
 			Utils.showNotification(this, R.drawable.notification, "学习模式", "机器人管家向您请教");
+			SettingLoader.setModeType(this,0);//0代表学习模式 1代表替身模式
 			finish();
 			break;
 		case R.id.button3:
-
+			//替身模式
 			break;
 		case R.id.button4:
 			SMSApp.getApp(this).stopDataService();
