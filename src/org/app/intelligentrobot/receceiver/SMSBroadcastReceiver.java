@@ -3,8 +3,8 @@ package org.app.intelligentrobot.receceiver;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
+
+import org.app.intelligentrobot.SMSApp;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +18,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Object[] pdus = (Object[])intent.getExtras().get("pdus");//获取短信内容
+		Log.i(TAG, "onReceive is running");
 		for(Object pdu : pdus){
 			byte[] data = (byte[]) pdu;//获取单条短信内容，短信内容以pdu格式存在
 			SmsMessage message = SmsMessage.createFromPdu(data);//使用pdu格式的短信数据生成短信对象
@@ -26,12 +27,9 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 			Date date = new Date(message.getTimestampMillis());
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String sendtime = format.format(date);
-			Map<String, String> params = new HashMap<String, String>();
-			params.put("method", "getSMS");
-			params.put("sender", sender);
-			params.put("content", content);
-			params.put("sendtime", sendtime);
 			Log.i(TAG, "sender " + sender + " content is " + content);
+			
+			SMSApp.getApp(context).getService().saveReceiveSMS(sender,content,sendtime);
 			
 		}
 	}
