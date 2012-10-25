@@ -21,7 +21,7 @@ import android.util.Log;
  */
 public class SMSService extends Service {
 
-	private static final String TAG = "TeleService";
+	private static final String TAG = "SMSService";
 	private static ArrayList<ServiceHandler> mServiceHandlers = new ArrayList<ServiceHandler>();
 	public static Context context;
 
@@ -74,6 +74,7 @@ public class SMSService extends Service {
 
 	@Override
 	public void onStart(Intent intent, int startId) {
+		Log.i(TAG, "onStart is running");
 		super.onStart(intent, startId);
 	}
 

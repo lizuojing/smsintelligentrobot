@@ -2,12 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ffffff"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:background="@drawable/btn_bg" >
 
         <TextView
             android:id="@+id/textView1"
@@ -16,7 +21,9 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/set_known" />
+            android:text="@string/set_known"
+            android:textColor="#000000"
+            android:textSize="18sp" />
 
         <CheckBox
             android:id="@+id/checkBox1"
@@ -30,7 +37,11 @@
     <RelativeLayout
         android:id="@+id/relativeLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:background="@drawable/btn_bg" >
 
         <TextView
             android:id="@+id/textView1"
@@ -39,7 +50,9 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/set_refuse" />
+            android:text="@string/set_refuse"
+            android:textColor="#000000"
+            android:textSize="18sp" />
 
         <ImageView
             android:layout_width="40dip"
@@ -52,7 +65,11 @@
     <RelativeLayout
         android:id="@+id/relativeLayout3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:background="@drawable/btn_bg" >
 
         <TextView
             android:id="@+id/textView1"
@@ -61,7 +78,9 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/set_dimsms" />
+            android:text="@string/set_dimsms"
+            android:textColor="#000000"
+            android:textSize="18sp" />
 
         <ImageView
             android:layout_width="40dip"
@@ -74,7 +93,11 @@
     <RelativeLayout
         android:id="@+id/relativeLayout4"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:background="@drawable/btn_bg" >
 
         <TextView
             android:id="@+id/textView1"
@@ -83,7 +106,9 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/set_keywords" />
+            android:text="@string/set_keywords"
+            android:textColor="#000000"
+            android:textSize="18sp" />
 
         <ImageView
             android:layout_width="40dip"

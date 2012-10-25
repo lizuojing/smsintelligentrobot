@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="#ffffff" >
 
     <Button
         android:id="@+id/button1"
@@ -9,7 +10,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        android:text="@string/setting" />
+        android:text="@string/learn_mode"
+        android:textColor="#000000" />
 
     <Button
         android:id="@+id/button2"
@@ -17,20 +19,23 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/button1"
         android:layout_centerHorizontal="true"
-        android:text="@string/learn_mode" />
+        android:text="@string/setting"
+        android:textColor="#000000" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button1"
-        android:text="@string/replacement_mode" />
+        android:text="@string/replacement_mode"
+        android:textColor="#000000" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button3"
-        android:text="@string/exit" />
+        android:text="@string/exit"
+        android:textColor="#000000" />
 
 </RelativeLayout>

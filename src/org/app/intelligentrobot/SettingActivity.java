@@ -24,6 +24,7 @@ public class SettingActivity extends Activity implements OnClickListener{
 		RelativeLayout item3 = (RelativeLayout)findViewById(R.id.relativeLayout3);
 		RelativeLayout item4 = (RelativeLayout)findViewById(R.id.relativeLayout4);
 		CheckBox checkBox = (CheckBox)findViewById(R.id.checkBox1);
+		checkBox.setChecked(SettingLoader.getKnown(this));
 		item1.setOnClickListener(this);
 		item2.setOnClickListener(this);
 		item3.setOnClickListener(this);
