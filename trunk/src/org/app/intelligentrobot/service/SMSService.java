@@ -3,10 +3,16 @@ package org.app.intelligentrobot.service;
 import java.util.ArrayList;
 
 import org.app.intelligentrobot.SMSApp;
+import org.app.intelligentrobot.data.LocalDataHelper;
+import org.app.intelligentrobot.entity.Sms;
+import org.app.intelligentrobot.receceiver.SmsObserver;
 
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -22,6 +28,7 @@ import android.util.Log;
 public class SMSService extends Service {
 
 	private static final String TAG = "SMSService";
+	private static final Uri SMS_URI = Uri.parse("content://sms/");
 	private static ArrayList<ServiceHandler> mServiceHandlers = new ArrayList<ServiceHandler>();
 	public static Context context;
 
@@ -60,6 +67,8 @@ public class SMSService extends Service {
 	}
 
 	private final IBinder mBinder = new LocalBinder();
+	private SmsObserver smsObserver;
+	private LocalDataHelper mLocalDataHelper;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -69,12 +78,32 @@ public class SMSService extends Service {
 	@Override
 	public void onCreate() {
 		context = SMSApp.getAppContext();
+		mLocalDataHelper = new LocalDataHelper(this);
 		super.onCreate();
+	}
+
+	private void initData() {
+		new AsyncTask<Void, Integer, Long>() {
+
+			@Override
+			protected Long doInBackground(Void... params) {
+				//拷贝已发送短信内容
+				copySendSMS();
+				
+				return null;
+			}
+
+			
+		}.execute();
 	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {
 		Log.i(TAG, "onStart is running");
+		smsObserver = new SmsObserver(this);
+		getContentResolver().registerContentObserver(
+				Uri.parse("content://sms"), true, smsObserver);
+		initData();
 		super.onStart(intent, startId);
 	}
 
@@ -85,6 +114,7 @@ public class SMSService extends Service {
 
 	@Override
 	public void onDestroy() {
+		getContentResolver().unregisterContentObserver(smsObserver);
 		Log.i(TAG, "onDestroy is running");
 		super.onDestroy();
 	}
@@ -123,4 +153,55 @@ public class SMSService extends Service {
 		}
 	}
 
+	public void saveReceiveSMS(String sender, String content, String sendtime) {
+		if(mLocalDataHelper==null) {
+			mLocalDataHelper = new LocalDataHelper(context);
+		}
+		mLocalDataHelper.saveReceiveSMS(sender, content, sendtime);
+	}
+	
+	private ArrayList<Sms> loadSendSMS() {
+		ArrayList<Sms> list = null;
+		 Cursor smsCursor = context.getContentResolver().query(SMS_URI,
+	        		new String[] { "_id", "address", "person", "date", "read","type", "body" },
+	        		null, null, null);
+		 if( smsCursor != null ) {
+			    int addressIndex = smsCursor.getColumnIndex("address");
+		        int bodyIndex = smsCursor.getColumnIndex("body");
+		        int typeIndex = smsCursor.getColumnIndex("type");
+			    if(list==null) {
+			    	list = new ArrayList<Sms>();
+			    }
+			    for(smsCursor.moveToFirst();!smsCursor.isAfterLast();smsCursor.moveToNext()) {
+			    	//1.接收到的消息，2.发出去的消息  
+			   		String number = smsCursor.getString(addressIndex);
+			   		String body = smsCursor.getString(bodyIndex);
+			   		String type = smsCursor.getString(typeIndex);
+		    		if("2".equals(type)) {
+		    			Sms SMS = new Sms();
+				   		SMS.setPnum(number);
+						SMS.setContent(body);
+						list.add(SMS);
+		    		}
+		    		
+			    }
+		 }
+		 return list;
+	}
+
+	public void updateSendSMS() {
+		if(mLocalDataHelper==null) {
+			mLocalDataHelper = new LocalDataHelper(context);
+		}
+		
+		mLocalDataHelper.updateSendSMS(loadSendSMS());
+		
+	}
+	private void copySendSMS() {
+		Log.i(TAG, "copySendSMS is running");
+		if(mLocalDataHelper==null) {
+			mLocalDataHelper = new LocalDataHelper(context);
+		}
+		 mLocalDataHelper.addSendSMS(loadSendSMS());
+	}
 }
