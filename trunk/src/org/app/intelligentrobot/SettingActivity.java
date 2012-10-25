@@ -1,6 +1,6 @@
 package org.app.intelligentrobot;
 
-import org.app.intelligentrobot.receceiver.SettingLoader;
+import org.app.intelligentrobot.data.SettingLoader;
 
 import android.app.Activity;
 import android.os.Bundle;

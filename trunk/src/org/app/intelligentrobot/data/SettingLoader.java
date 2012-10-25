@@ -1,4 +1,4 @@
-package org.app.intelligentrobot.receceiver;
+package org.app.intelligentrobot.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
