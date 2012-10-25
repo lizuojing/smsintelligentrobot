@@ -4,16 +4,15 @@ import java.lang.reflect.Method;
 
 import org.app.intelligentrobot.utils.Utils;
 
-import com.android.internal.telephony.ITelephony;
-
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.widget.Toast;
+
+import com.android.internal.telephony.ITelephony;
 
 public class PhoneReceiver extends BroadcastReceiver {
 
