@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.app.intelligentrobot.SMSApp;
 import org.app.intelligentrobot.data.LocalDataHelper;
-import org.app.intelligentrobot.entity.Sms;
+import org.app.intelligentrobot.entity.Conversation;
 import org.app.intelligentrobot.receceiver.SmsObserver;
 
 import android.app.Service;
@@ -178,36 +178,52 @@ public class SMSService extends Service {
 		mLocalDataHelper.saveReceiveSMS(sender, content, sendtime);
 	}
 
-	private ArrayList<Sms> loadSendSMS() {
-		ArrayList<Sms> list = null;
-		Cursor smsCursor = context.getContentResolver().query(
-				SMS_URI,
-				new String[] { "_id", "address", "person", "date", "read",
-						"type", "body" }, null, null, null);
-		if (smsCursor != null) {
-			int addressIndex = smsCursor.getColumnIndex("address");
-			int bodyIndex = smsCursor.getColumnIndex("body");
-			int typeIndex = smsCursor.getColumnIndex("type");
-			if (list == null) {
-				list = new ArrayList<Sms>();
-			}
-			for (smsCursor.moveToFirst(); !smsCursor.isAfterLast(); smsCursor
-					.moveToNext()) {
-				// 1.接收到的消息，2.发出去的消息
-				String number = smsCursor.getString(addressIndex);
-				String body = smsCursor.getString(bodyIndex);
-				String type = smsCursor.getString(typeIndex);
-				if ("2".equals(type)) {
-					Sms SMS = new Sms();
-					SMS.setPnum(number);
-					SMS.setContent(body);
-					list.add(SMS);
-				}
-
-			}
-		}
-		return list;
+	private ArrayList<Conversation> loadSendSMS() {
+		ArrayList<Conversation> list = null;
+		 Cursor smsCursor = context.getContentResolver().query(SMS_URI,
+	        		new String[] { "_id", "address", "person", "date", "read","type", "body" },
+	        		"type = 1", null, "  ORDER BY date ASC ");//降序排列
+		 if( smsCursor != null ) {
+			    int addressIndex = smsCursor.getColumnIndex("address");
+		        int bodyIndex = smsCursor.getColumnIndex("body");
+		        int typeIndex = smsCursor.getColumnIndex("type");
+		        int timeIndex = smsCursor.getColumnIndexOrThrow("date");
+			    if(list==null) {
+			    	list = new ArrayList<Conversation>();
+			    }else {
+			    	list.clear();
+			    }
+			    for(smsCursor.moveToFirst();!smsCursor.isAfterLast();smsCursor.moveToNext()) {
+			    	//1.接收到的消息，2.发出去的消息  
+			   		String number = smsCursor.getString(addressIndex);
+			   		String body = smsCursor.getString(bodyIndex);
+			   		String type = smsCursor.getString(typeIndex);
+			   		int time = smsCursor.getInt(timeIndex);
+	    			Cursor tempCursor = context.getContentResolver().query(SMS_URI,
+	    		        		new String[] { "_id", "address", "person", "date", "read","type", "body" },
+	    		        		number+"=? AND type = 2 AND date > " + time, null, "  ORDER BY date ASC ");//降序排列
+	    			Log.i(TAG, "number is " + number + " time is " + number);
+	    			if(tempCursor!=null&&tempCursor.getCount()>0) {
+	    				tempCursor.moveToFirst();
+		    			String tempnumber = tempCursor.getString(addressIndex);
+				   		String tempbody = tempCursor.getString(bodyIndex);
+				   		String temptype = tempCursor.getString(typeIndex);
+				   		int temptime = tempCursor.getInt(timeIndex);
+				   		Conversation conversation = new Conversation();
+		    			conversation.setPnum(number);
+		    			conversation.setSendcontent(tempbody);
+		    			conversation.setSendtime(temptime+"");
+		    			conversation.setReceivecontent(body);
+		    			conversation.setReceivetime(time+"");
+		    			list.add(conversation);
+	    			}
+			    }
+			    
+			   
+		 }
+		 return  list;
 	}
+
 
 	public void updateSendSMS() {
 		if (mLocalDataHelper == null) {

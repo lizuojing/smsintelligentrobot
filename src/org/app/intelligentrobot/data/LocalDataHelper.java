@@ -3,7 +3,7 @@ package org.app.intelligentrobot.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.app.intelligentrobot.entity.Sms;
+import org.app.intelligentrobot.entity.Conversation;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -30,8 +30,11 @@ public class LocalDataHelper {
 
 	// 发送信息表
 	private static final String DB_SMS_SEND_TABLE = "table_smssend";
-	public static final String KEY_SMS_SEND_CONTENT = "content";
 	public static final String KEY_SMS_SEND_NUMBER = "phone";
+	public static final String KEY_SMS_SEND_SENDCONTENT = "sendcontent";
+	public static final String KEY_SMS_SEND_SENDTIME = "sendtime";
+	public static final String KEY_SMS_SEND_RECEIVECONTENT = "receivetime";
+	public static final String KEY_SMS_SEND_RECEIVETIME = "receivetime";
 
 	// 关键词信息表
 	private static final String DB_KEYWORDS_TABLE = "table_keyword";
@@ -48,7 +51,11 @@ public class LocalDataHelper {
 	// sql for create SMS send table
 	private static final String CREATE_SMS_SEND_TABLE = "CREATE TABLE "
 			+ DB_SMS_SEND_TABLE + " (" + KEY_KEYWORDS_ID
-			+ " INTEGER PRIMARY KEY," + KEY_SMS_SEND_CONTENT + " TEXT,"
+			+ " INTEGER PRIMARY KEY,"
+			+ KEY_SMS_SEND_SENDCONTENT + " TEXT,"
+			+ KEY_SMS_SEND_SENDTIME + " INTEGER,"
+			+ KEY_SMS_SEND_RECEIVECONTENT + " TEXT,"
+			+ KEY_SMS_SEND_RECEIVETIME + " INTEGER,"
 			+ KEY_SMS_SEND_NUMBER + " TEXT )";
 
 	// sql for create SMS table
@@ -108,22 +115,25 @@ public class LocalDataHelper {
 		Log.i(TAG, "insert is " + insert);
 	}
 
-	public void updateSendSMS(ArrayList<Sms> list) {
+	public void updateSendSMS(ArrayList<Conversation> list) {
 		// 删除数据
 		mSQLiteDatabase.delete(DB_SMS_SEND_TABLE, null, null);
 		addSendSMS(list);
 	}
 
-	public void addSendSMS(ArrayList<Sms> list) {
+	public void addSendSMS(ArrayList<Conversation> list) {
 		if (mSQLiteDatabase==null||!mSQLiteDatabase.isOpen()) {
 			open();
 		}
 		Log.i(TAG, "list size is " + (list!=null?list.size():0));
 		List<ContentValues> cvList = new ArrayList<ContentValues>();
-		for (Sms sms : list) {
+		for (Conversation sms : list) {
 			ContentValues cv = new ContentValues();
 			cv.put(KEY_SMS_SEND_NUMBER, sms.getPnum());
-			cv.put(KEY_SMS_SEND_CONTENT, sms.getContent());
+			cv.put(KEY_SMS_SEND_SENDCONTENT, sms.getSendcontent());
+			cv.put(KEY_SMS_SEND_SENDTIME, sms.getSendtime());
+			cv.put(KEY_SMS_SEND_RECEIVECONTENT, sms.getReceivecontent());
+			cv.put(KEY_SMS_SEND_RECEIVETIME, sms.getReceivetime());
 			cvList.add(cv);
 		}
 
