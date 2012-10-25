@@ -38,6 +38,12 @@ public class SettingActivity extends Activity implements OnClickListener{
 			}
 		});
 	}
+	
+	@Override
+	public void onBackPressed() {
+		finish();
+		super.onBackPressed();
+	}
 
 	@Override
 	public void onClick(View v) {
