@@ -1,5 +1,7 @@
 package org.app.intelligentrobot;
 
+import org.app.intelligentrobot.utils.Utils;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,7 +34,9 @@ public class MainActivity extends Activity implements OnClickListener {
 			startActivity(intent);
 			break;
 		case R.id.button1:
-
+			//学习模式
+			Utils.showNotification(this, R.drawable.notification, "学习模式", "机器人管家向您请教");
+			finish();
 			break;
 		case R.id.button3:
 
