@@ -1,5 +1,10 @@
 package org.app.intelligentrobot.service;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import org.app.intelligentrobot.SMSApp;
@@ -10,6 +15,7 @@ import org.app.intelligentrobot.receceiver.SmsObserver;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -29,6 +35,7 @@ public class SMSService extends Service {
 
 	private static final String TAG = "SMSService";
 	private static final Uri SMS_URI = Uri.parse("content://sms/");
+	private static final String KEYWORDSPATH = "keywords.txt";
 	private static ArrayList<ServiceHandler> mServiceHandlers = new ArrayList<ServiceHandler>();
 	public static Context context;
 
@@ -101,10 +108,10 @@ public class SMSService extends Service {
 	}
 
 	private void initData() {
-		// 拷贝已发送短信内容
-		copySendSMS();
 		//初始化关键字词库
 		initKeyWords();
+		// 拷贝已发送短信内容
+		copySendSMS();
 	}
 	
 	public void copySendSMS() {
@@ -125,9 +132,66 @@ public class SMSService extends Service {
 	}
 
 	private void initKeyWords() {
-		// TODO Auto-generated method stub
+		new AsyncTask<Void, Integer, Long>() {
+
+			@Override
+			protected Long doInBackground(Void... params) {
+				Log.i(TAG, "copySendSMS is running");
+				if (mLocalDataHelper == null) {
+					mLocalDataHelper = new LocalDataHelper(context);
+				}
+				ArrayList<String> list = loadKeywords();
+				if(list!=null) {
+					mLocalDataHelper.insertOrUpdateKeywords(list);
+				}
+				return null;
+			}
+
+			
+
+		}.execute();
 		
 	}
+
+	private ArrayList<String> loadKeywords() {
+		
+		ArrayList<String> list = null;
+		AssetManager asset_manager = context.getAssets();
+		
+		
+		InputStream fis = null;
+		String line = null;
+		try {
+			fis = asset_manager.open(KEYWORDSPATH,AssetManager.ACCESS_STREAMING);
+			BufferedReader bf = new BufferedReader(new InputStreamReader(fis,"UTF-8"));
+			line = bf.readLine();
+			while (null != line) {
+				if (list == null) {
+					list = new ArrayList<String>();
+				}
+				line = bf.readLine();
+				if(null!=line) {
+					list.add(line);
+				}
+			}
+			bf.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (null != fis) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
 
 	@Override
 	public void onStart(Intent intent, int startId) {

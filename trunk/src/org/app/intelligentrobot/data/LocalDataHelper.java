@@ -188,4 +188,68 @@ public class LocalDataHelper {
 		   
 		   return result;
 	}
+
+	public void insertOrUpdateKeywords(ArrayList<String> list) {
+		if (mSQLiteDatabase==null||!mSQLiteDatabase.isOpen()) {
+			open();
+		}
+		Log.i(TAG, "list size is " + (list!=null?list.size():0));
+		List<ContentValues> cvList = new ArrayList<ContentValues>();
+		for (String keyword : list) {
+			ContentValues cv = new ContentValues();
+			cv.put(KEY_KEYWORDS_CONTENT, keyword);
+			cvList.add(cv);
+		}
+
+		if (mSQLiteDatabase != null) {
+			synchronized (mSQLiteDatabase) {
+
+				mSQLiteDatabase.beginTransaction();
+				try {
+					for (int j = 0; j < cvList.size(); j++) {
+						ContentValues cv = cvList.get(j);
+						String keyword = cv.getAsString(KEY_KEYWORDS_CONTENT);
+						if(keywordExist(keyword)) {
+							Log.i(TAG, "keyword is exist");
+//							if (mSQLiteDatabase.update(DB_KEYWORDS_TABLE,cv,KEY_KEYWORDS_CONTENT + "=?",new String[]{keyword}) != -1) {
+//								Log.i(TAG, "Update new record: Key:"+ cv.getAsString(KEY_KEYWORDS_CONTENT));
+//							} else {
+//								Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_KEYWORDS_CONTENT));
+//
+//							}
+						}else {
+							if (mSQLiteDatabase.insert(DB_KEYWORDS_TABLE, null, cv) != -1) {
+								Log.i(TAG, "keyword is " + cv.getAsString(KEY_KEYWORDS_CONTENT));
+							} else {
+								Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_KEYWORDS_CONTENT));
+
+							}	
+						}
+					}
+					mSQLiteDatabase.setTransactionSuccessful();
+				} catch (RuntimeException e) {
+					mSQLiteDatabase.endTransaction();
+					throw e;
+				}
+				mSQLiteDatabase.endTransaction();
+			}
+		}
+	}
+
+	private boolean keywordExist(String keyword) {
+		if(keyword==null) {
+			return false;
+		}
+		 Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE, null, KEY_KEYWORDS_CONTENT+"=?", new String[]{keyword}, null, null, null);
+		   
+		   boolean result = false;
+		   if( cursor!= null ) {
+			   if( cursor.getCount() > 0 ) {
+				   result = true;
+			   }
+			   cursor.close();
+		   }
+		   
+		   return result;
+	}
 }
