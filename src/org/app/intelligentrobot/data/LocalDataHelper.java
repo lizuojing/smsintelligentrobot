@@ -7,6 +7,7 @@ import org.app.intelligentrobot.entity.Conversation;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -30,10 +31,12 @@ public class LocalDataHelper {
 
 	// 发送信息表
 	private static final String DB_SMS_SEND_TABLE = "table_smssend";
+	private static final String DB_SMS_SEND_ID = "_id";
+	public static final String KEY_SMS_SEND_SMSID = "smsid";
 	public static final String KEY_SMS_SEND_NUMBER = "phone";
 	public static final String KEY_SMS_SEND_SENDCONTENT = "sendcontent";
 	public static final String KEY_SMS_SEND_SENDTIME = "sendtime";
-	public static final String KEY_SMS_SEND_RECEIVECONTENT = "receivetime";
+	public static final String KEY_SMS_SEND_RECEIVECONTENT = "receivecontent";
 	public static final String KEY_SMS_SEND_RECEIVETIME = "receivetime";
 
 	// 关键词信息表
@@ -50,8 +53,9 @@ public class LocalDataHelper {
 
 	// sql for create SMS send table
 	private static final String CREATE_SMS_SEND_TABLE = "CREATE TABLE "
-			+ DB_SMS_SEND_TABLE + " (" + KEY_KEYWORDS_ID
+			+ DB_SMS_SEND_TABLE + " (" + DB_SMS_SEND_ID
 			+ " INTEGER PRIMARY KEY,"
+			+ KEY_SMS_SEND_SMSID + " INTEGER,"
 			+ KEY_SMS_SEND_SENDCONTENT + " TEXT,"
 			+ KEY_SMS_SEND_SENDTIME + " INTEGER,"
 			+ KEY_SMS_SEND_RECEIVECONTENT + " TEXT,"
@@ -115,13 +119,8 @@ public class LocalDataHelper {
 		Log.i(TAG, "insert is " + insert);
 	}
 
-	public void updateSendSMS(ArrayList<Conversation> list) {
-		// 删除数据
-		mSQLiteDatabase.delete(DB_SMS_SEND_TABLE, null, null);
-		addSendSMS(list);
-	}
 
-	public void addSendSMS(ArrayList<Conversation> list) {
+	public void saveOrUpdateSendSMS(ArrayList<Conversation> list) {
 		if (mSQLiteDatabase==null||!mSQLiteDatabase.isOpen()) {
 			open();
 		}
@@ -129,6 +128,7 @@ public class LocalDataHelper {
 		List<ContentValues> cvList = new ArrayList<ContentValues>();
 		for (Conversation sms : list) {
 			ContentValues cv = new ContentValues();
+			cv.put(KEY_SMS_SEND_SMSID, sms.getSmsid());
 			cv.put(KEY_SMS_SEND_NUMBER, sms.getPnum());
 			cv.put(KEY_SMS_SEND_SENDCONTENT, sms.getSendcontent());
 			cv.put(KEY_SMS_SEND_SENDTIME, sms.getSendtime());
@@ -144,11 +144,22 @@ public class LocalDataHelper {
 				try {
 					for (int j = 0; j < cvList.size(); j++) {
 						ContentValues cv = cvList.get(j);
-						if (mSQLiteDatabase.insert(DB_SMS_SEND_TABLE, null, cv) != -1) {
-							Log.i(TAG, "Insert new record: Key:"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
-						} else {
-							Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
+						String id = cv.getAsString(KEY_SMS_SEND_SMSID);
+						Log.i(TAG, "smsid is " + id);
+						if(smsExist(id)) {
+							if (mSQLiteDatabase.update(DB_SMS_SEND_TABLE,cv,KEY_SMS_SEND_SMSID + "=?",new String[]{id}) != -1) {
+								Log.i(TAG, "Update new record: Key:"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
+							} else {
+								Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
 
+							}
+						}else {
+							if (mSQLiteDatabase.insert(DB_SMS_SEND_TABLE, null, cv) != -1) {
+								Log.i(TAG, "Insert new record: Key:"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
+							} else {
+								Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
+
+							}	
 						}
 					}
 					mSQLiteDatabase.setTransactionSuccessful();
@@ -159,5 +170,22 @@ public class LocalDataHelper {
 				mSQLiteDatabase.endTransaction();
 			}
 		}
+	}
+
+	private boolean smsExist(String id) {
+		if(id==null) {
+			return false;
+		}
+		 Cursor cursor = mSQLiteDatabase.query(DB_SMS_SEND_TABLE, null, KEY_SMS_SEND_SMSID+"=?", new String[]{id}, null, null, null);
+		   
+		   boolean result = false;
+		   if( cursor!= null ) {
+			   if( cursor.getCount() > 0 ) {
+				   result = true;
+			   }
+			   cursor.close();
+		   }
+		   
+		   return result;
 	}
 }

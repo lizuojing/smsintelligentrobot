@@ -1,5 +1,7 @@
 package org.app.intelligentrobot.receceiver;
 
+import org.app.intelligentrobot.SMSApp;
+
 import android.content.Context;
 import android.database.ContentObserver;
 import android.util.Log;
@@ -17,7 +19,7 @@ public class SmsObserver extends ContentObserver {
 	@Override
 	public void onChange(boolean selfChange) {
 		// 监听短信变化 TODO
-		// SMSApp.getApp(context).getService().updateSendSMS();
+		SMSApp.getApp(context).getService().copySendSMS();
 	}
 
 }
