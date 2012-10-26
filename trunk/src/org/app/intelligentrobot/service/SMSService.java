@@ -101,18 +101,32 @@ public class SMSService extends Service {
 	}
 
 	private void initData() {
+		// 拷贝已发送短信内容
+		copySendSMS();
+		//初始化关键字词库
+		initKeyWords();
+	}
+	
+	public void copySendSMS() {
 		new AsyncTask<Void, Integer, Long>() {
 
 			@Override
 			protected Long doInBackground(Void... params) {
-				// 拷贝已发送短信内容
-				copySendSMS();
-				// 初始化关键词库
-
+				Log.i(TAG, "copySendSMS is running");
+				if (mLocalDataHelper == null) {
+					mLocalDataHelper = new LocalDataHelper(context);
+				}
+				mLocalDataHelper.saveOrUpdateSendSMS(loadSendSMS());
 				return null;
 			}
 
 		}.execute();
+		
+	}
+
+	private void initKeyWords() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -171,23 +185,16 @@ public class SMSService extends Service {
 		}
 	}
 
-	public void saveReceiveSMS(String sender, String content, String sendtime) {
-		if (mLocalDataHelper == null) {
-			mLocalDataHelper = new LocalDataHelper(context);
-		}
-		mLocalDataHelper.saveReceiveSMS(sender, content, sendtime);
-	}
-
 	private ArrayList<Conversation> loadSendSMS() {
 		ArrayList<Conversation> list = null;
 		 Cursor smsCursor = context.getContentResolver().query(SMS_URI,
 	        		new String[] { "_id", "address", "person", "date", "read","type", "body" },
-	        		"type = 1", null, "  ORDER BY date ASC ");//降序排列
+	        		" type = 1 ", null, " date ASC ");//升序排列
 		 if( smsCursor != null ) {
 			    int addressIndex = smsCursor.getColumnIndex("address");
 		        int bodyIndex = smsCursor.getColumnIndex("body");
 		        int typeIndex = smsCursor.getColumnIndex("type");
-		        int timeIndex = smsCursor.getColumnIndexOrThrow("date");
+		        int timeIndex = smsCursor.getColumnIndex("date");
 			    if(list==null) {
 			    	list = new ArrayList<Conversation>();
 			    }else {
@@ -198,21 +205,29 @@ public class SMSService extends Service {
 			   		String number = smsCursor.getString(addressIndex);
 			   		String body = smsCursor.getString(bodyIndex);
 			   		String type = smsCursor.getString(typeIndex);
-			   		int time = smsCursor.getInt(timeIndex);
+			   		String time = smsCursor.getString(timeIndex);
+			   		
 	    			Cursor tempCursor = context.getContentResolver().query(SMS_URI,
 	    		        		new String[] { "_id", "address", "person", "date", "read","type", "body" },
-	    		        		number+"=? AND type = 2 AND date > " + time, null, "  ORDER BY date ASC ");//降序排列
-	    			Log.i(TAG, "number is " + number + " time is " + number);
+	    		        		" address = "+number+" AND type = 2 AND date >"+ time, null, " date ASC ");//降序排列
 	    			if(tempCursor!=null&&tempCursor.getCount()>0) {
 	    				tempCursor.moveToFirst();
-		    			String tempnumber = tempCursor.getString(addressIndex);
-				   		String tempbody = tempCursor.getString(bodyIndex);
-				   		String temptype = tempCursor.getString(typeIndex);
-				   		int temptime = tempCursor.getInt(timeIndex);
+	    				int tempidIndex = tempCursor.getColumnIndex("_id");
+	    				int tempaddressIndex = tempCursor.getColumnIndex("address");
+    			        int tempbodyIndex = tempCursor.getColumnIndex("body");
+    			        int temptypeIndex = tempCursor.getColumnIndex("type");
+    			        int temptimeIndex = tempCursor.getColumnIndexOrThrow("date");
+    			        int tempid = tempCursor.getInt(tempidIndex);
+		    			String tempnumber = tempCursor.getString(tempaddressIndex);
+				   		String tempbody = tempCursor.getString(tempbodyIndex);
+				   		String temptype = tempCursor.getString(temptypeIndex);
+				   		String temptime = tempCursor.getString(temptimeIndex);
+				   		Log.i(TAG, "time is " + time + " temptime is " + temptime + " tempid " + tempid);
 				   		Conversation conversation = new Conversation();
+				   		conversation.setSmsid(tempid);
 		    			conversation.setPnum(number);
 		    			conversation.setSendcontent(tempbody);
-		    			conversation.setSendtime(temptime+"");
+		    			conversation.setSendtime(temptime);
 		    			conversation.setReceivecontent(body);
 		    			conversation.setReceivetime(time+"");
 		    			list.add(conversation);
@@ -224,21 +239,4 @@ public class SMSService extends Service {
 		 return  list;
 	}
 
-
-	public void updateSendSMS() {
-		if (mLocalDataHelper == null) {
-			mLocalDataHelper = new LocalDataHelper(context);
-		}
-
-		mLocalDataHelper.updateSendSMS(loadSendSMS());
-
-	}
-
-	private void copySendSMS() {
-		Log.i(TAG, "copySendSMS is running");
-		if (mLocalDataHelper == null) {
-			mLocalDataHelper = new LocalDataHelper(context);
-		}
-		mLocalDataHelper.addSendSMS(loadSendSMS());
-	}
 }

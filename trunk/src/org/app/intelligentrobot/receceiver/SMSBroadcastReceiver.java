@@ -30,13 +30,10 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 			SimpleDateFormat format = new SimpleDateFormat(
 					"yyyy-MM-dd HH:mm:ss");
 			String sendtime = format.format(date);
-
+			Log.i(TAG, "sender is " + sender + " content is " + content + " sendtime is " + sendtime);
 			Toast.makeText(context, "收到" + sender + "的短信", Toast.LENGTH_SHORT)
 					.show();
 			Utils.sendSMS(context, sender, findTheAnswer(content));
-			SMSApp.getApp(context).getService()
-					.saveReceiveSMS(sender, content, sendtime);
-
 		}
 	}
 
