@@ -2,6 +2,8 @@ package org.app.intelligentrobot.receceiver;
 
 import java.lang.reflect.Method;
 
+import org.app.intelligentrobot.MainActivity;
+import org.app.intelligentrobot.data.SettingLoader;
 import org.app.intelligentrobot.utils.Utils;
 
 import android.app.Service;
@@ -47,16 +49,15 @@ public class PhoneReceiver extends BroadcastReceiver {
 			super.onCallStateChanged(state, incomingNumber);
 			switch (state) {
 			case TelephonyManager.CALL_STATE_IDLE:
-				Toast.makeText(context, "挂断", Toast.LENGTH_SHORT).show();
 				break;
 			case TelephonyManager.CALL_STATE_OFFHOOK:
 				break;
 			case TelephonyManager.CALL_STATE_RINGING:
-				Toast.makeText(context, "响铃:来电号码" + incomingNumber,
-						Toast.LENGTH_SHORT).show();
-
-				if (endCall(context)) {
-					Utils.sendSMS(context, incomingNumber, "打你妹电话，老子开会呢。");
+				if (MainActivity.STATE == MainActivity.SUBSTITUTE) {
+					if (endCall(context)) {
+						Utils.sendSMS(context, incomingNumber,
+								SettingLoader.getDefaultSMS(context));
+					}
 				}
 				;
 				break;
