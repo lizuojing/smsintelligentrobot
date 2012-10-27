@@ -156,12 +156,12 @@ public class LocalDataHelper {
 				try {
 					for (int j = 0; j < cvList.size(); j++) {
 						ContentValues cv = cvList.get(j);
-						String id = cv.getAsString(KEY_SMS_SEND_SMSID);
-						Log.i(TAG, "smsid is " + id);
-						if (smsExist(id)) {
+						String send = cv.getAsString(KEY_SMS_SEND_SENDCONTENT);
+						Log.i(TAG, "smsid is " + send);
+						if (smsExist(send)) {
 							if (mSQLiteDatabase.update(DB_SMS_SEND_TABLE, cv,
-									KEY_SMS_SEND_SMSID + "=?",
-									new String[] { id }) != -1) {
+									KEY_SMS_SEND_SENDCONTENT + "=?",
+									new String[] { send }) != -1) {
 								Log.i(TAG,
 										"Update new record: Key:"
 												+ cv.getAsString(KEY_SMS_SEND_NUMBER));
@@ -193,12 +193,12 @@ public class LocalDataHelper {
 		}
 	}
 
-	private boolean smsExist(String id) {
-		if (id == null) {
+	private boolean smsExist(String send) {
+		if (send == null) {
 			return false;
 		}
 		Cursor cursor = mSQLiteDatabase.query(DB_SMS_SEND_TABLE, null,
-				KEY_SMS_SEND_SMSID + "=?", new String[] { id }, null, null,
+				KEY_SMS_SEND_SENDCONTENT + "=?", new String[] { send }, null, null,
 				null);
 
 		boolean result = false;
