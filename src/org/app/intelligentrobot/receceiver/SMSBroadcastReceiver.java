@@ -10,6 +10,7 @@ import org.app.intelligentrobot.data.LocalDataHelper;
 import org.app.intelligentrobot.data.SettingLoader;
 import org.app.intelligentrobot.entity.Conversation;
 import org.app.intelligentrobot.entity.CosineSimilarAlgorithm;
+import org.app.intelligentrobot.utils.Levenshtein;
 import org.app.intelligentrobot.utils.Utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -82,13 +83,12 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 			String a = conversation.getReceivecontent();
 
 			double rate = isSameRate(content, a);
-
-			if (rate < minRate) {
+			Log.e("配对字符串：", "比率 " + rate + "   ");
+			if (rate <= minRate) {
 				minRate = rate;
 				temp = conversation;
-				Log.e("学习库里配对字符串：",
-						"比率 " + rate + "   " + a + " 对应回答："
-								+ temp.getSendcontent());
+				Log.e("---------------------------", "比率 " + rate + "   " + a
+						+ " 对应回答：" + temp.getSendcontent());
 			}
 		}
 		if (temp == null) {
@@ -100,7 +100,8 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 	}
 
 	private double isSameRate(String s1, String s2) {
-		double xx = CosineSimilarAlgorithm.EditDistance(s1, s2);
+		double xx = Levenshtein.compare(s1, s2);
+		
 		return xx;
 	}
 
