@@ -3,6 +3,7 @@ package org.app.intelligentrobot;
 import org.app.intelligentrobot.data.SettingLoader;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -52,13 +53,16 @@ public class SettingActivity extends Activity implements OnClickListener{
 			Log.i(TAG, "relativeLayout1 is running");
 			break;
 		case R.id.relativeLayout2:
-			
+			Intent defaultIntent = new Intent(this,DefaultSMSActivity.class);
+			startActivity(defaultIntent);
 			break;
 		case R.id.relativeLayout3:
-			
+			Intent dimIntent = new Intent(this,DIMSMSActivity.class);
+			startActivity(dimIntent);
 			break;
 		case R.id.relativeLayout4:
-			
+			Intent keywordIntent = new Intent(this,KeyWordSetActivity.class);
+			startActivity(keywordIntent);
 			break;
 
 		default:

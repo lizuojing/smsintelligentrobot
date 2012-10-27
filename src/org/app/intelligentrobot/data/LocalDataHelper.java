@@ -43,6 +43,13 @@ public class LocalDataHelper {
 	private static final String DB_KEYWORDS_TABLE = "table_keyword";
 	public static final String KEY_KEYWORDS_ID = "id";
 	public static final String KEY_KEYWORDS_CONTENT = "content";
+	
+	//模糊表
+	private static final String DB_DIM_TABLE = "table_dim";
+	public static final String KEY_DIM_ID = "id";
+	public static final String KEY_DIM_CONTENT = "content";
+	
+	
 
 	// sql for create SMS receive table
 	private static final String CREATE_LOCAL_SMSRECEIVE_TABLE = "CREATE TABLE "
@@ -66,6 +73,14 @@ public class LocalDataHelper {
 	private static final String CREATE_KEYWORD_TABLE = "CREATE TABLE "
 			+ DB_KEYWORDS_TABLE + " (" + KEY_KEYWORDS_ID
 			+ " INTEGER PRIMARY KEY," + KEY_KEYWORDS_CONTENT + " TEXT )";
+	
+	
+	// sql for create dim table
+	private static final String CREATE_DIM_TABLE = "CREATE TABLE "
+			+ DB_DIM_TABLE + " (" + KEY_DIM_ID
+			+ " INTEGER PRIMARY KEY," + KEY_DIM_CONTENT + " TEXT )";
+	
+	
 	private static final String TAG = "LocalDataHelper";
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -79,6 +94,7 @@ public class LocalDataHelper {
 			db.execSQL(CREATE_LOCAL_SMSRECEIVE_TABLE);
 			db.execSQL(CREATE_SMS_SEND_TABLE);
 			db.execSQL(CREATE_KEYWORD_TABLE);
+			db.execSQL(CREATE_DIM_TABLE);
 		}
 
 		@Override
@@ -251,5 +267,23 @@ public class LocalDataHelper {
 		   }
 		   
 		   return result;
+	}
+
+	public ArrayList<String> loadDimList() {
+		if (mSQLiteDatabase==null||!mSQLiteDatabase.isOpen()) {
+			open();
+		}
+		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE, new String[]{KEY_DIM_CONTENT}, null, null, null, null, null);
+		if(cursor==null||cursor.getCount()==0) {
+			return null;
+		}
+		ArrayList<String> list = new ArrayList<String>();
+		for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()) {
+			String dimsms = cursor.getString(cursor.getColumnIndexOrThrow(KEY_DIM_CONTENT));
+			if(dimsms!=null) {
+				list.add(dimsms);
+			}
+		}
+		return list;
 	}
 }

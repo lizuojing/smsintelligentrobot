@@ -109,7 +109,7 @@ public class SMSService extends Service {
 
 	private void initData() {
 		//初始化关键字词库
-		initKeyWords();
+//		initKeyWords();
 		// 拷贝已发送短信内容
 		copySendSMS();
 	}
@@ -301,6 +301,25 @@ public class SMSService extends Service {
 			   
 		 }
 		 return  list;
+	}
+
+	public ArrayList<String> loadDim() {
+		if (mLocalDataHelper == null) {
+			mLocalDataHelper = new LocalDataHelper(context);
+		}
+		return mLocalDataHelper.loadDimList();
+	}
+
+	public void deleteDim(String content) {
+		if (mLocalDataHelper == null) {
+			mLocalDataHelper = new LocalDataHelper(context);
+		}
+	}
+
+	public void saveDimSms(String dimcontent) {
+		if (mLocalDataHelper == null) {
+			mLocalDataHelper = new LocalDataHelper(context);
+		}
 	}
 
 }

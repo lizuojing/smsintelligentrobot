@@ -64,4 +64,11 @@ public class Utils {
         notificationManager.cancel(id);
     }
 	
+	public static boolean isNullOrEmpty(String str) {
+		if(null==str||"".equals(str)) {
+			return true;
+		}
+		return false;
+	}
+	
 }
