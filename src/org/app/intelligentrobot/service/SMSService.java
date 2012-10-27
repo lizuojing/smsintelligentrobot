@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import org.app.intelligentrobot.SMSApp;
 import org.app.intelligentrobot.data.LocalDataHelper;
+import org.app.intelligentrobot.data.SettingLoader;
 import org.app.intelligentrobot.entity.Conversation;
 import org.app.intelligentrobot.receceiver.SmsObserver;
 
@@ -112,6 +113,10 @@ public class SMSService extends Service {
 		// initKeyWords();
 		// 拷贝已发送短信内容
 		copySendSMS();
+		//初始化默认短信
+		if(SettingLoader.getDefaultSMS(context)==null) {
+			SettingLoader.setDefaultSMS(context, "我现在有点事，一会回你电话。");
+		}
 	}
 
 	public void copySendSMS() {
