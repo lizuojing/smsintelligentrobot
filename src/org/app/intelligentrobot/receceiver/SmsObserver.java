@@ -19,7 +19,7 @@ public class SmsObserver extends ContentObserver {
 	@Override
 	public void onChange(boolean selfChange) {
 		// 监听短信变化 TODO
-		SMSApp.getApp(context).getService().copySendSMS();
+		// SMSApp.getApp(context).getService().copySendSMS();
 	}
 
 }

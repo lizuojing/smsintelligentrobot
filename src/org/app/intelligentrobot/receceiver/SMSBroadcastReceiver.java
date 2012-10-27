@@ -76,9 +76,14 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 		double maxRate = 0;
 		ArrayList<Conversation> messageAnswer = SMSApp.getApp(context)
 				.getService().getList();
+		Log.e("收到的短信：:", content);
 		for (Conversation conversation : messageAnswer) {
 			String a = conversation.getReceivecontent();
+
 			double rate = isSameRate(content, a);
+
+			Log.e("配对字符串：", "比率" + rate + "   " + a);
+
 			if (rate >= 0.5d && rate > maxRate) {
 				maxRate = rate;
 				temp = conversation;
@@ -93,8 +98,9 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 	}
 
 	private double isSameRate(String s1, String s2) {
-		return CosineSimilarAlgorithm.getSimilarity(s1, s2);
-
+		double xx = CosineSimilarAlgorithm.getSimilarity(s1, s2);
+		Log.e("rate", "" + Double.toString(xx));
+		return xx;
 	}
 
 }
