@@ -333,12 +333,15 @@ public class SMSService extends Service {
 		if (mLocalDataHelper == null) {
 			mLocalDataHelper = new LocalDataHelper(context);
 		}
+		mLocalDataHelper.deleteDimsms(content);
 	}
 
 	public void saveDimSms(String dimcontent) {
 		if (mLocalDataHelper == null) {
 			mLocalDataHelper = new LocalDataHelper(context);
 		}
+		
+		mLocalDataHelper.saveOrUpdateDimsms(dimcontent);
 	}
 
 }

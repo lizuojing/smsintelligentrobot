@@ -21,6 +21,7 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class DIMSMSActivity extends Activity {
+	private static final String TAG = "DIMSMSActivity";
 	private Button btn_create;
 	private ListView listView;
 	private ArrayAdapter<String> adapter;
@@ -64,7 +65,7 @@ public class DIMSMSActivity extends Activity {
 		list = loadDim();
 		if (list != null && list.size() > 0) {
 			adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_expandable_list_item_1, list);
+					R.layout.list_item, list);
 			// ListAdapter adapter = new ListAdapter(this,loadDim());
 			listView.setAdapter(adapter);
 		}
