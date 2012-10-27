@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.internal.telephony.ITelephony;
@@ -25,7 +26,7 @@ public class PhoneReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
 		this.context = context;
-		System.out.println("action" + intent.getAction());
+		Log.e("action", intent.getAction());
 		if (intent.getAction().equals(Intent.ACTION_NEW_OUTGOING_CALL)) {
 			// 如果是去电（拨出）
 			;
@@ -54,6 +55,7 @@ public class PhoneReceiver extends BroadcastReceiver {
 				break;
 			case TelephonyManager.CALL_STATE_RINGING:
 				if (MainActivity.STATE == MainActivity.SUBSTITUTE) {
+					Log.e("替身模式生效.", "yes");
 					if (endCall(context)) {
 						Utils.sendSMS(context, incomingNumber,
 								SettingLoader.getDefaultSMS(context));

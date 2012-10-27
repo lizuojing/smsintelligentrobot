@@ -33,14 +33,12 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 			String sender = message.getOriginatingAddress();// 获取短信的发送者
 			String content = message.getMessageBody();// 获取短信的内容
 			Date date = new Date(message.getTimestampMillis());
-			SimpleDateFormat format = new SimpleDateFormat(
-					"yyyy-MM-dd HH:mm:ss");
-			String sendtime = format.format(date);
+
 			Toast.makeText(context, "收到" + sender + "的短信", Toast.LENGTH_SHORT)
 					.show();
 			if (MainActivity.STATE == MainActivity.SUBSTITUTE) {
+				Log.e("替身模式生效.", "yes");
 				Utils.sendSMS(context, sender, findTheAnswer(content));
-
 			}
 		}
 	}
@@ -51,17 +49,21 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 		if (SettingLoader.getKnown(context)) {
 			answer = "[替身机器人帮我回复：]";
 		}
-		String keywordAnswer = LocalDataHelper.findKeyword(content);
+		String keywordAnswer = LocalDataHelper.loadAnswer(content);
 		if (keywordAnswer != null) {
+			Log.e("关键字里查找的结果：", "::" + keywordAnswer);
 			answer = answer + keywordAnswer;
 		} else {
 			String messageAnswer = getAnswerFromMessage(content);
 			if (messageAnswer != null) {
+				Log.e("收件箱里匹配的：", "::" + messageAnswer);
 				answer = answer + messageAnswer;
 			} else {
 				ArrayList<String> strings = LocalDataHelper.loadDimList();
 				int readomWordIndex = (int) (Math.random() * strings.size());
-				answer = answer + strings.get(readomWordIndex);
+				String hanhuMessage = strings.get(readomWordIndex);
+				Log.e("含糊短信:", "::" + hanhuMessage);
+				answer = answer + hanhuMessage;
 			}
 
 		}
@@ -75,7 +77,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 		ArrayList<Conversation> messageAnswer = SMSApp.getApp(context)
 				.getService().getList();
 		for (Conversation conversation : messageAnswer) {
-			String a = conversation.getSendcontent();
+			String a = conversation.getReceivecontent();
 			double rate = isSameRate(content, a);
 			if (rate >= 0.5d && rate > maxRate) {
 				maxRate = rate;
@@ -85,7 +87,8 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 		if (temp == null) {
 			return null;
 		} else {
-			return temp.getReceivecontent();
+			Log.e("收件箱里较为相似的短信：", temp.getReceivecontent() + "");
+			return temp.getSendcontent();
 		}
 	}
 

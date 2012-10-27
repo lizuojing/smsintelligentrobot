@@ -44,7 +44,7 @@
                     android:textColor="#000000" />
 
                 <EditText
-                    android:id="@+id/dimedit"
+                    android:id="@+id/question"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -60,7 +60,7 @@
                     android:textColor="#000000" />
 
                 <EditText
-                    android:id="@+id/dimedit"
+                    android:id="@+id/answer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>

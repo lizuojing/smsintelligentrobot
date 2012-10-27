@@ -49,7 +49,8 @@ public class DIMSMSActivity extends Activity {
 					list = new ArrayList<String>();
 				}
 				list.add(dimcontent);
-				SMSApp.getApp(DIMSMSActivity.this).getService().saveDimSms(dimcontent);
+				SMSApp.getApp(DIMSMSActivity.this).getService()
+						.saveDimSms(dimcontent);
 				if (list != null && list.size() > 0) {
 					adapter = new ArrayAdapter<String>(DIMSMSActivity.this,
 							R.layout.list_item, list);
@@ -64,8 +65,7 @@ public class DIMSMSActivity extends Activity {
 		listView.setCacheColorHint(Color.TRANSPARENT);
 		list = loadDim();
 		if (list != null && list.size() > 0) {
-			adapter = new ArrayAdapter<String>(this,
-					R.layout.list_item, list);
+			adapter = new ArrayAdapter<String>(this, R.layout.list_item, list);
 			// ListAdapter adapter = new ListAdapter(this,loadDim());
 			listView.setAdapter(adapter);
 		}
@@ -73,23 +73,27 @@ public class DIMSMSActivity extends Activity {
 		listView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, final int arg2,
-					long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View arg1,
+					final int arg2, long arg3) {
 				Log.i("aa", "================");
 				new AlertDialog.Builder(DIMSMSActivity.this)
-						.setTitle("删除该模糊信息").setPositiveButton("确认",
+						.setTitle("删除该模糊信息")
+						.setPositiveButton("确认",
 								new DialogInterface.OnClickListener() {
 
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
 										String content = list.get(arg2);
-										SMSApp.getApp(DIMSMSActivity.this).getService().deleteDim(content);
+										SMSApp.getApp(DIMSMSActivity.this)
+												.getService()
+												.deleteDim(content);
 										list.remove(arg2);
 										adapter.notifyDataSetChanged();
 
 									}
-								}).setNegativeButton("取消",
+								})
+						.setNegativeButton("取消",
 								new DialogInterface.OnClickListener() {
 
 									@Override

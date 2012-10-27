@@ -2,6 +2,8 @@ package org.app.intelligentrobot;
 
 import java.util.ArrayList;
 
+import org.app.intelligentrobot.data.LocalDataHelper;
+import org.app.intelligentrobot.entity.AskKeyWordEntity;
 import org.app.intelligentrobot.utils.Utils;
 
 import android.app.Activity;
@@ -13,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -23,49 +24,55 @@ import android.widget.AdapterView.OnItemClickListener;
 public class KeyWordSetActivity extends Activity {
 	private Button btn_create;
 	private ListView listView;
-	private ArrayAdapter<String> adapter;
-	private EditText dimEdit;
-	private ArrayList<String> list;
+	private KeywordAdapter adapter;
+	private EditText question, answer;
+	private ArrayList<AskKeyWordEntity> list;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.keyword);
 		btn_create = (Button) findViewById(R.id.btn_create);
-		dimEdit = (EditText) findViewById(R.id.dimedit);
+		question = (EditText) findViewById(R.id.question);
+		answer = (EditText) findViewById(R.id.answer);
 		btn_create.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				String dimcontent = dimEdit.getText().toString();
-				if (Utils.isNullOrEmpty(dimcontent)) {
-					Toast.makeText(KeyWordSetActivity.this, "没有输入任何内容哦！",
+				AskKeyWordEntity awe = new AskKeyWordEntity();
+				String questions = question.getText().toString();
+				String answers = answer.getText().toString();
+				if (Utils.isNullOrEmpty(questions)
+						|| Utils.isNullOrEmpty(answers)) {
+					Toast.makeText(KeyWordSetActivity.this, "输入内容不完整。",
 							Toast.LENGTH_SHORT).show();
 					return;
 				}
-
+				awe.setQuestion(questions);
+				awe.setAnswer(answers);
 				if (list == null) {
-					list = new ArrayList<String>();
+					list = new ArrayList<AskKeyWordEntity>();
 				}
-				list.add(dimcontent);
-				SMSApp.getApp(KeyWordSetActivity.this).getService()
-						.saveDimSms(dimcontent);
+				list.add(awe);
+
+				LocalDataHelper.saveOrUpdateKeyword(awe.getQuestion(),
+						awe.getAnswer());
+
 				if (list != null && list.size() > 0) {
-					adapter = new ArrayAdapter<String>(KeyWordSetActivity.this,
-							R.layout.list_item, list);
+					adapter = new KeywordAdapter(KeyWordSetActivity.this, list);
 					listView.setAdapter(adapter);
 				}
 				adapter.notifyDataSetChanged();
-				dimEdit.setText("");
+				question.setText("");
+				answer.setText("");
 			}
 		});
 
 		listView = (ListView) findViewById(R.id.listView1);
 		listView.setCacheColorHint(Color.TRANSPARENT);
-		list = loadDim();
+		list = LocalDataHelper.loadKeyword();
 		if (list != null && list.size() > 0) {
-			adapter = new ArrayAdapter<String>(this,
-					android.R.layout.simple_expandable_list_item_1, list);
+			adapter = new KeywordAdapter(KeyWordSetActivity.this, list);
 			// ListAdapter adapter = new ListAdapter(this,loadDim());
 			listView.setAdapter(adapter);
 		}
@@ -77,17 +84,19 @@ public class KeyWordSetActivity extends Activity {
 					final int arg2, long arg3) {
 				Log.i("aa", "================");
 				new AlertDialog.Builder(KeyWordSetActivity.this)
-						.setTitle("删除该模糊信息")
+						.setTitle("删除该对应关键字嘛。")
 						.setPositiveButton("确认",
 								new DialogInterface.OnClickListener() {
 
 									@Override
 									public void onClick(DialogInterface dialog,
 											int which) {
-										String content = list.get(arg2);
-										SMSApp.getApp(KeyWordSetActivity.this)
-												.getService()
-												.deleteDim(content);
+
+										AskKeyWordEntity content = list
+												.get(arg2);
+
+										LocalDataHelper.deleteKeyword(content
+												.getQuestion());
 										list.remove(arg2);
 										adapter.notifyDataSetChanged();
 
@@ -105,10 +114,6 @@ public class KeyWordSetActivity extends Activity {
 			}
 
 		});
-	}
-
-	private ArrayList<String> loadDim() {
-		return SMSApp.getApp(this).getService().loadDim();
 	}
 
 }
