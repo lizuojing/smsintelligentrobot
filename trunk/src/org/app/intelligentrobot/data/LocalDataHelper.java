@@ -328,7 +328,6 @@ public class LocalDataHelper {
 		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
 			String dimsms = cursor.getString(cursor
 					.getColumnIndexOrThrow(KEY_DIM_CONTENT));
-			Log.i(TAG, "dimsms is " + dimsms);
 			if (dimsms != null) {
 				list.add(dimsms);
 			}

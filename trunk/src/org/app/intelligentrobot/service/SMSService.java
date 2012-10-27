@@ -119,9 +119,9 @@ public class SMSService extends Service {
 		if (SettingLoader.getDefaultSMS(context) == null) {
 			SettingLoader.setDefaultSMS(context, "我现在有点事，一会回你电话。");
 		}
-		
-		//初始化模糊短信
-		if(!dimExist()) {
+
+		// 初始化模糊短信
+		if (!dimExist()) {
 			initDim();
 		}
 	}
@@ -149,7 +149,6 @@ public class SMSService extends Service {
 				return null;
 			}
 
-
 		}.execute();
 
 	}
@@ -161,8 +160,7 @@ public class SMSService extends Service {
 		InputStream fis = null;
 		String line = null;
 		try {
-			fis = asset_manager.open(DIM,
-					AssetManager.ACCESS_STREAMING);
+			fis = asset_manager.open(DIM, AssetManager.ACCESS_STREAMING);
 			BufferedReader bf = new BufferedReader(new InputStreamReader(fis,
 					"UTF-8"));
 			line = bf.readLine();
@@ -192,7 +190,7 @@ public class SMSService extends Service {
 		}
 		return list;
 	}
-	
+
 	public void copySendSMS() {
 		new AsyncTask<Void, Integer, Long>() {
 
@@ -424,7 +422,7 @@ public class SMSService extends Service {
 		if (mLocalDataHelper == null) {
 			mLocalDataHelper = new LocalDataHelper(context);
 		}
-		
+
 		mLocalDataHelper.saveOrUpdateDimsms(dimcontent);
 	}
 
