@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import org.app.intelligentrobot.entity.AskKeyWordEntity;
 import org.app.intelligentrobot.entity.Conversation;
 
 import android.content.ContentValues;
@@ -44,7 +45,6 @@ public class LocalDataHelper {
 	private static final String DB_KEYWORDS_TABLE = "table_keyword";
 	public static final String KEY_KEYWORDS_ID = "id";
 	public static final String KEY_KEYWORDS_CONTENT = "content";
-
 	public static final String KEY_KEYWORDS_ANSWERS = "answers";
 
 	// 模糊表
@@ -363,6 +363,57 @@ public class LocalDataHelper {
 			open();
 		}
 		mSQLiteDatabase.delete(DB_DIM_TABLE, KEY_DIM_CONTENT+"=?", new String[]{content});
+	}
+	
+	
+	public void saveOrUpdateKeyword(String ask,String answer) {
+		ContentValues value = new ContentValues();
+		value.put(KEY_KEYWORDS_CONTENT, ask);
+		value.put(KEY_KEYWORDS_ANSWERS, answer);
+		if(keywordExist(ask)) {
+//			mSQLiteDatabase.update(DB_DIM_TABLE, value, KEY_DIM_CONTENT+" =? ", new String[]{dimcontent});
+			Log.i(TAG, "update ask is " + ask + " answer is " + answer);
+		}else {
+			mSQLiteDatabase.insert(DB_KEYWORDS_TABLE, KEY_KEYWORDS_ID, value);
+		}
+	}
+	
+	public ArrayList<AskKeyWordEntity> loadKeyword() {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+			open();
+		}
+		Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE,
+				new String[] { KEY_KEYWORDS_CONTENT,KEY_KEYWORDS_ANSWERS }, null, null, null, null, null);
+		Log.i(TAG, "count is " + cursor.getCount());
+		if (cursor == null || cursor.getCount() == 0) {
+			return null;
+		}
+		AskKeyWordEntity entity = null;
+		ArrayList<AskKeyWordEntity> list = new ArrayList<AskKeyWordEntity>();
+		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+			String ask = cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEYWORDS_CONTENT));
+			String answer = cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEYWORDS_ANSWERS));
+			entity = new AskKeyWordEntity();
+			entity.setQuestion(ask);
+			entity.setAnswer(answer);
+			list.add(entity);
+		}
+		return list;
+	}
+	
+	public String loadAnswer(String ask) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+			open();
+		}
+		Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE,
+				new String[] { KEY_KEYWORDS_ANSWERS }, KEY_KEYWORDS_CONTENT+" =? ", new String[]{ask}, null, null, null);
+		Log.i(TAG, "count is " + cursor.getCount());
+		if (cursor == null || cursor.getCount() == 0) {
+			return null;
+		}
+		cursor.moveToFirst();
+		return cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEYWORDS_ANSWERS));
+	
 	}
 
 }
