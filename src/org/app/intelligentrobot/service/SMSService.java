@@ -110,11 +110,11 @@ public class SMSService extends Service {
 
 	private void initData() {
 		// 初始化关键字词库
-		// initKeyWords();
+		initKeyWords();
 		// 拷贝已发送短信内容
 		copySendSMS();
-		//初始化默认短信
-		if(SettingLoader.getDefaultSMS(context)==null) {
+		// 初始化默认短信
+		if (SettingLoader.getDefaultSMS(context) == null) {
 			SettingLoader.setDefaultSMS(context, "我现在有点事，一会回你电话。");
 		}
 	}
