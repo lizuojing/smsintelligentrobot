@@ -1,6 +1,7 @@
 package org.app.intelligentrobot.data;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.app.intelligentrobot.entity.Conversation;
@@ -18,9 +19,9 @@ public class LocalDataHelper {
 	private static final String DB_NAME = "SMSApp.db";
 	private static final int DB_VERSION = 1;
 
-	private Context mContext;
-	private DatabaseHelper mDatabaseHelper;
-	private SQLiteDatabase mSQLiteDatabase;
+	private static Context mContext;
+	private static DatabaseHelper mDatabaseHelper;
+	private static SQLiteDatabase mSQLiteDatabase;
 
 	// 收件信息表
 	private static final String DB_Local_SMS_Table = "table_smsreceive";
@@ -43,13 +44,13 @@ public class LocalDataHelper {
 	private static final String DB_KEYWORDS_TABLE = "table_keyword";
 	public static final String KEY_KEYWORDS_ID = "id";
 	public static final String KEY_KEYWORDS_CONTENT = "content";
-	
-	//模糊表
+
+	public static final String KEY_KEYWORDS_ANSWERS = "answers";
+
+	// 模糊表
 	private static final String DB_DIM_TABLE = "table_dim";
 	public static final String KEY_DIM_ID = "id";
 	public static final String KEY_DIM_CONTENT = "content";
-	
-	
 
 	// sql for create SMS receive table
 	private static final String CREATE_LOCAL_SMSRECEIVE_TABLE = "CREATE TABLE "
@@ -61,26 +62,22 @@ public class LocalDataHelper {
 	// sql for create SMS send table
 	private static final String CREATE_SMS_SEND_TABLE = "CREATE TABLE "
 			+ DB_SMS_SEND_TABLE + " (" + DB_SMS_SEND_ID
-			+ " INTEGER PRIMARY KEY,"
-			+ KEY_SMS_SEND_SMSID + " INTEGER,"
-			+ KEY_SMS_SEND_SENDCONTENT + " TEXT,"
-			+ KEY_SMS_SEND_SENDTIME + " INTEGER,"
-			+ KEY_SMS_SEND_RECEIVECONTENT + " TEXT,"
-			+ KEY_SMS_SEND_RECEIVETIME + " INTEGER,"
-			+ KEY_SMS_SEND_NUMBER + " TEXT )";
+			+ " INTEGER PRIMARY KEY," + KEY_SMS_SEND_SMSID + " INTEGER,"
+			+ KEY_SMS_SEND_SENDCONTENT + " TEXT," + KEY_SMS_SEND_SENDTIME
+			+ " INTEGER," + KEY_SMS_SEND_RECEIVECONTENT + " TEXT,"
+			+ KEY_SMS_SEND_RECEIVETIME + " INTEGER," + KEY_SMS_SEND_NUMBER
+			+ " TEXT )";
 
 	// sql for create SMS table
 	private static final String CREATE_KEYWORD_TABLE = "CREATE TABLE "
 			+ DB_KEYWORDS_TABLE + " (" + KEY_KEYWORDS_ID
 			+ " INTEGER PRIMARY KEY," + KEY_KEYWORDS_CONTENT + " TEXT )";
-	
-	
+
 	// sql for create dim table
 	private static final String CREATE_DIM_TABLE = "CREATE TABLE "
-			+ DB_DIM_TABLE + " (" + KEY_DIM_ID
-			+ " INTEGER PRIMARY KEY," + KEY_DIM_CONTENT + " TEXT )";
-	
-	
+			+ DB_DIM_TABLE + " (" + KEY_DIM_ID + " INTEGER PRIMARY KEY,"
+			+ KEY_DIM_CONTENT + " TEXT )";
+
 	private static final String TAG = "LocalDataHelper";
 
 	private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -109,7 +106,7 @@ public class LocalDataHelper {
 		mContext = context;
 	}
 
-	public void open() throws SQLException {
+	public static void open() throws SQLException {
 		mDatabaseHelper = new DatabaseHelper(mContext);
 		mSQLiteDatabase = mDatabaseHelper.getWritableDatabase();
 	}
@@ -135,12 +132,11 @@ public class LocalDataHelper {
 		Log.i(TAG, "insert is " + insert);
 	}
 
-
 	public void saveOrUpdateSendSMS(ArrayList<Conversation> list) {
-		if (mSQLiteDatabase==null||!mSQLiteDatabase.isOpen()) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
-		Log.i(TAG, "list size is " + (list!=null?list.size():0));
+		Log.i(TAG, "list size is " + (list != null ? list.size() : 0));
 		List<ContentValues> cvList = new ArrayList<ContentValues>();
 		for (Conversation sms : list) {
 			ContentValues cv = new ContentValues();
@@ -162,20 +158,29 @@ public class LocalDataHelper {
 						ContentValues cv = cvList.get(j);
 						String id = cv.getAsString(KEY_SMS_SEND_SMSID);
 						Log.i(TAG, "smsid is " + id);
-						if(smsExist(id)) {
-							if (mSQLiteDatabase.update(DB_SMS_SEND_TABLE,cv,KEY_SMS_SEND_SMSID + "=?",new String[]{id}) != -1) {
-								Log.i(TAG, "Update new record: Key:"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
+						if (smsExist(id)) {
+							if (mSQLiteDatabase.update(DB_SMS_SEND_TABLE, cv,
+									KEY_SMS_SEND_SMSID + "=?",
+									new String[] { id }) != -1) {
+								Log.i(TAG,
+										"Update new record: Key:"
+												+ cv.getAsString(KEY_SMS_SEND_NUMBER));
 							} else {
-								Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
+								Log.i(TAG, "Error while insert new record :"
+										+ cv.getAsString(KEY_SMS_SEND_NUMBER));
 
 							}
-						}else {
-							if (mSQLiteDatabase.insert(DB_SMS_SEND_TABLE, null, cv) != -1) {
-								Log.i(TAG, "Insert new record: Key:"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
+						} else {
+							if (mSQLiteDatabase.insert(DB_SMS_SEND_TABLE, null,
+									cv) != -1) {
+								Log.i(TAG,
+										"Insert new record: Key:"
+												+ cv.getAsString(KEY_SMS_SEND_NUMBER));
 							} else {
-								Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_SMS_SEND_NUMBER));
+								Log.i(TAG, "Error while insert new record :"
+										+ cv.getAsString(KEY_SMS_SEND_NUMBER));
 
-							}	
+							}
 						}
 					}
 					mSQLiteDatabase.setTransactionSuccessful();
@@ -189,27 +194,29 @@ public class LocalDataHelper {
 	}
 
 	private boolean smsExist(String id) {
-		if(id==null) {
+		if (id == null) {
 			return false;
 		}
-		 Cursor cursor = mSQLiteDatabase.query(DB_SMS_SEND_TABLE, null, KEY_SMS_SEND_SMSID+"=?", new String[]{id}, null, null, null);
-		   
-		   boolean result = false;
-		   if( cursor!= null ) {
-			   if( cursor.getCount() > 0 ) {
-				   result = true;
-			   }
-			   cursor.close();
-		   }
-		   
-		   return result;
+		Cursor cursor = mSQLiteDatabase.query(DB_SMS_SEND_TABLE, null,
+				KEY_SMS_SEND_SMSID + "=?", new String[] { id }, null, null,
+				null);
+
+		boolean result = false;
+		if (cursor != null) {
+			if (cursor.getCount() > 0) {
+				result = true;
+			}
+			cursor.close();
+		}
+
+		return result;
 	}
 
 	public void insertOrUpdateKeywords(ArrayList<String> list) {
-		if (mSQLiteDatabase==null||!mSQLiteDatabase.isOpen()) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
-		Log.i(TAG, "list size is " + (list!=null?list.size():0));
+		Log.i(TAG, "list size is " + (list != null ? list.size() : 0));
 		List<ContentValues> cvList = new ArrayList<ContentValues>();
 		for (String keyword : list) {
 			ContentValues cv = new ContentValues();
@@ -225,21 +232,29 @@ public class LocalDataHelper {
 					for (int j = 0; j < cvList.size(); j++) {
 						ContentValues cv = cvList.get(j);
 						String keyword = cv.getAsString(KEY_KEYWORDS_CONTENT);
-						if(keywordExist(keyword)) {
+						if (keywordExist(keyword)) {
 							Log.i(TAG, "keyword is exist");
-//							if (mSQLiteDatabase.update(DB_KEYWORDS_TABLE,cv,KEY_KEYWORDS_CONTENT + "=?",new String[]{keyword}) != -1) {
-//								Log.i(TAG, "Update new record: Key:"+ cv.getAsString(KEY_KEYWORDS_CONTENT));
-//							} else {
-//								Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_KEYWORDS_CONTENT));
-//
-//							}
-						}else {
-							if (mSQLiteDatabase.insert(DB_KEYWORDS_TABLE, null, cv) != -1) {
-								Log.i(TAG, "keyword is " + cv.getAsString(KEY_KEYWORDS_CONTENT));
+							// if
+							// (mSQLiteDatabase.update(DB_KEYWORDS_TABLE,cv,KEY_KEYWORDS_CONTENT
+							// + "=?",new String[]{keyword}) != -1) {
+							// Log.i(TAG, "Update new record: Key:"+
+							// cv.getAsString(KEY_KEYWORDS_CONTENT));
+							// } else {
+							// Log.i(TAG, "Error while insert new record :"+
+							// cv.getAsString(KEY_KEYWORDS_CONTENT));
+							//
+							// }
+						} else {
+							if (mSQLiteDatabase.insert(DB_KEYWORDS_TABLE, null,
+									cv) != -1) {
+								Log.i(TAG,
+										"keyword is "
+												+ cv.getAsString(KEY_KEYWORDS_CONTENT));
 							} else {
-								Log.i(TAG, "Error while insert new record :"+ cv.getAsString(KEY_KEYWORDS_CONTENT));
+								Log.i(TAG, "Error while insert new record :"
+										+ cv.getAsString(KEY_KEYWORDS_CONTENT));
 
-							}	
+							}
 						}
 					}
 					mSQLiteDatabase.setTransactionSuccessful();
@@ -252,38 +267,62 @@ public class LocalDataHelper {
 		}
 	}
 
-	private boolean keywordExist(String keyword) {
-		if(keyword==null) {
+	public static boolean keywordExist(String keyword) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+			open();
+		}
+
+		if (keyword == null) {
 			return false;
 		}
-		 Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE, null, KEY_KEYWORDS_CONTENT+"=?", new String[]{keyword}, null, null, null);
-		   
-		   boolean result = false;
-		   if( cursor!= null ) {
-			   if( cursor.getCount() > 0 ) {
-				   result = true;
-			   }
-			   cursor.close();
-		   }
-		   
-		   return result;
+		Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE, null,
+				KEY_KEYWORDS_CONTENT + "=?", new String[] { keyword }, null,
+				null, null);
+
+		boolean result = false;
+		if (cursor != null) {
+			if (cursor.getCount() > 0) {
+				result = true;
+			}
+			cursor.close();
+		}
+
+		return result;
+	}
+
+	public static String findKeyword(String keyword) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+			open();
+		}
+
+		if (keyword == null) {
+			return null;
+		}
+		Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE, null,
+				KEY_KEYWORDS_CONTENT + "=?", new String[] { keyword }, null,
+				null, null);
+		// TODO Auto-generated method stub
+		return "返回一个关键值";
 	}
 
 	public ArrayList<String> loadDimList() {
-		if (mSQLiteDatabase==null||!mSQLiteDatabase.isOpen()) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
-		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE, new String[]{KEY_DIM_CONTENT}, null, null, null, null, null);
-		if(cursor==null||cursor.getCount()==0) {
+		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE,
+				new String[] { KEY_DIM_CONTENT }, null, null, null, null, null);
+		if (cursor == null || cursor.getCount() == 0) {
 			return null;
 		}
 		ArrayList<String> list = new ArrayList<String>();
-		for(cursor.moveToFirst();!cursor.isAfterLast();cursor.moveToNext()) {
-			String dimsms = cursor.getString(cursor.getColumnIndexOrThrow(KEY_DIM_CONTENT));
-			if(dimsms!=null) {
+		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+			String dimsms = cursor.getString(cursor
+					.getColumnIndexOrThrow(KEY_DIM_CONTENT));
+			if (dimsms != null) {
 				list.add(dimsms);
 			}
 		}
 		return list;
 	}
+
 }

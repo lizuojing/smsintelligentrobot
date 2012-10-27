@@ -108,12 +108,12 @@ public class SMSService extends Service {
 	}
 
 	private void initData() {
-		//初始化关键字词库
+		// 初始化关键字词库
 //		initKeyWords();
 		// 拷贝已发送短信内容
 		copySendSMS();
 	}
-	
+
 	public void copySendSMS() {
 		new AsyncTask<Void, Integer, Long>() {
 
@@ -128,7 +128,7 @@ public class SMSService extends Service {
 			}
 
 		}.execute();
-		
+
 	}
 
 	private void initKeyWords() {
@@ -141,36 +141,35 @@ public class SMSService extends Service {
 					mLocalDataHelper = new LocalDataHelper(context);
 				}
 				ArrayList<String> list = loadKeywords();
-				if(list!=null) {
+				if (list != null) {
 					mLocalDataHelper.insertOrUpdateKeywords(list);
 				}
 				return null;
 			}
 
-			
-
 		}.execute();
-		
+
 	}
 
 	private ArrayList<String> loadKeywords() {
-		
+
 		ArrayList<String> list = null;
 		AssetManager asset_manager = context.getAssets();
-		
-		
+
 		InputStream fis = null;
 		String line = null;
 		try {
-			fis = asset_manager.open(KEYWORDSPATH,AssetManager.ACCESS_STREAMING);
-			BufferedReader bf = new BufferedReader(new InputStreamReader(fis,"UTF-8"));
+			fis = asset_manager.open(KEYWORDSPATH,
+					AssetManager.ACCESS_STREAMING);
+			BufferedReader bf = new BufferedReader(new InputStreamReader(fis,
+					"UTF-8"));
 			line = bf.readLine();
 			while (null != line) {
 				if (list == null) {
 					list = new ArrayList<String>();
 				}
 				line = bf.readLine();
-				if(null!=line) {
+				if (null != line) {
 					list.add(line);
 				}
 			}
@@ -191,7 +190,6 @@ public class SMSService extends Service {
 		}
 		return list;
 	}
-	
 
 	@Override
 	public void onStart(Intent intent, int startId) {
@@ -249,58 +247,76 @@ public class SMSService extends Service {
 		}
 	}
 
+	ArrayList<Conversation> list = null;
+
+	public ArrayList<Conversation> getList() {
+		if (list == null) {
+			list = loadSendSMS();
+		}
+		return list;
+	}
+
+	public void setList(ArrayList<Conversation> list) {
+		this.list = list;
+	}
+
 	private ArrayList<Conversation> loadSendSMS() {
-		ArrayList<Conversation> list = null;
-		 Cursor smsCursor = context.getContentResolver().query(SMS_URI,
-	        		new String[] { "_id", "address", "person", "date", "read","type", "body" },
-	        		" type = 1 ", null, " date ASC ");//升序排列
-		 if( smsCursor != null ) {
-			    int addressIndex = smsCursor.getColumnIndex("address");
-		        int bodyIndex = smsCursor.getColumnIndex("body");
-		        int typeIndex = smsCursor.getColumnIndex("type");
-		        int timeIndex = smsCursor.getColumnIndex("date");
-			    if(list==null) {
-			    	list = new ArrayList<Conversation>();
-			    }else {
-			    	list.clear();
-			    }
-			    for(smsCursor.moveToFirst();!smsCursor.isAfterLast();smsCursor.moveToNext()) {
-			    	//1.接收到的消息，2.发出去的消息  
-			   		String number = smsCursor.getString(addressIndex);
-			   		String body = smsCursor.getString(bodyIndex);
-			   		String type = smsCursor.getString(typeIndex);
-			   		String time = smsCursor.getString(timeIndex);
-			   		
-	    			Cursor tempCursor = context.getContentResolver().query(SMS_URI,
-	    		        		new String[] { "_id", "address", "person", "date", "read","type", "body" },
-	    		        		" address = "+number+" AND type = 2 AND date >"+ time, null, " date ASC ");//降序排列
-	    			if(tempCursor!=null&&tempCursor.getCount()>0) {
-	    				tempCursor.moveToFirst();
-	    				int tempidIndex = tempCursor.getColumnIndex("_id");
-	    				int tempaddressIndex = tempCursor.getColumnIndex("address");
-    			        int tempbodyIndex = tempCursor.getColumnIndex("body");
-    			        int temptypeIndex = tempCursor.getColumnIndex("type");
-    			        int temptimeIndex = tempCursor.getColumnIndexOrThrow("date");
-    			        int tempid = tempCursor.getInt(tempidIndex);
-		    			String tempnumber = tempCursor.getString(tempaddressIndex);
-				   		String tempbody = tempCursor.getString(tempbodyIndex);
-				   		String temptype = tempCursor.getString(temptypeIndex);
-				   		String temptime = tempCursor.getString(temptimeIndex);
-				   		Log.i(TAG, "time is " + time + " temptime is " + temptime + " tempid " + tempid);
-				   		Conversation conversation = new Conversation();
-				   		conversation.setSmsid(tempid);
-		    			conversation.setPnum(number);
-		    			conversation.setSendcontent(tempbody);
-		    			conversation.setSendtime(temptime);
-		    			conversation.setReceivecontent(body);
-		    			conversation.setReceivetime(time+"");
-		    			list.add(conversation);
-	    			}
-			    }
-			    
-			   
-		 }
-		 return  list;
+		Cursor smsCursor = context.getContentResolver().query(
+				SMS_URI,
+				new String[] { "_id", "address", "person", "date", "read",
+						"type", "body" }, " type = 1 ", null, " date ASC ");// 升序排列
+		if (smsCursor != null) {
+			int addressIndex = smsCursor.getColumnIndex("address");
+			int bodyIndex = smsCursor.getColumnIndex("body");
+			int typeIndex = smsCursor.getColumnIndex("type");
+			int timeIndex = smsCursor.getColumnIndex("date");
+			if (list == null) {
+				list = new ArrayList<Conversation>();
+			} else {
+				list.clear();
+			}
+			for (smsCursor.moveToFirst(); !smsCursor.isAfterLast(); smsCursor
+					.moveToNext()) {
+				// 1.接收到的消息，2.发出去的消息
+				String number = smsCursor.getString(addressIndex);
+				String body = smsCursor.getString(bodyIndex);
+				String type = smsCursor.getString(typeIndex);
+				String time = smsCursor.getString(timeIndex);
+
+				Cursor tempCursor = context.getContentResolver().query(
+						SMS_URI,
+						new String[] { "_id", "address", "person", "date",
+								"read", "type", "body" },
+						" address = " + number + " AND type = 2 AND date >"
+								+ time, null, " date ASC ");// 降序排列
+				if (tempCursor != null && tempCursor.getCount() > 0) {
+					tempCursor.moveToFirst();
+					int tempidIndex = tempCursor.getColumnIndex("_id");
+					int tempaddressIndex = tempCursor.getColumnIndex("address");
+					int tempbodyIndex = tempCursor.getColumnIndex("body");
+					int temptypeIndex = tempCursor.getColumnIndex("type");
+					int temptimeIndex = tempCursor
+							.getColumnIndexOrThrow("date");
+					int tempid = tempCursor.getInt(tempidIndex);
+					String tempnumber = tempCursor.getString(tempaddressIndex);
+					String tempbody = tempCursor.getString(tempbodyIndex);
+					String temptype = tempCursor.getString(temptypeIndex);
+					String temptime = tempCursor.getString(temptimeIndex);
+					Log.i(TAG, "time is " + time + " temptime is " + temptime
+							+ " tempid " + tempid);
+					Conversation conversation = new Conversation();
+					conversation.setSmsid(tempid);
+					conversation.setPnum(number);
+					conversation.setSendcontent(tempbody);
+					conversation.setSendtime(temptime);
+					conversation.setReceivecontent(body);
+					conversation.setReceivetime(time + "");
+					list.add(conversation);
+				}
+			}
+
+		}
+		return list;
 	}
 
 	public ArrayList<String> loadDim() {

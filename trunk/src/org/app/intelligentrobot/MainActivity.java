@@ -1,17 +1,20 @@
 package org.app.intelligentrobot;
 
 import org.app.intelligentrobot.data.SettingLoader;
+import org.app.intelligentrobot.entity.CosineSimilarAlgorithm;
 import org.app.intelligentrobot.utils.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class MainActivity extends Activity implements OnClickListener {
 
+	public static int STATE = -1;
 	public static final int SUBSTITUTE = 0;
 	public static final int LEARNING = 1;
 
@@ -43,18 +46,19 @@ public class MainActivity extends Activity implements OnClickListener {
 			Utils.showNotification(this, R.drawable.notification, "学习模式",
 					"机器人管家向您请教");
 			SettingLoader.setModeType(this, SUBSTITUTE);// 0代表学习模式 1代表替身模式
-			finish();
+			STATE = LEARNING;
 			break;
 		case R.id.button3:
 			// 替身模式
 			Utils.showNotification(this, R.drawable.notification, "替身模式",
 					"机器人管家为您服务");
 			SettingLoader.setModeType(this, LEARNING);
-			finish();
+			STATE = SUBSTITUTE;
 			break;
 		case R.id.button4:
 			SMSApp.getApp(this).stopDataService();
 			finish();
+
 			break;
 
 		default:
