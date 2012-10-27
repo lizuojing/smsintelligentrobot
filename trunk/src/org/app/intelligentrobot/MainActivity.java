@@ -20,10 +20,10 @@ public class MainActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		Button btn_set = (Button) findViewById(R.id.button2);
-		Button btn_learn = (Button) findViewById(R.id.button1);
-		Button btn_replace = (Button) findViewById(R.id.button3);
-		Button btn_exit = (Button) findViewById(R.id.button4);
+		Button btn_set = (Button) findViewById(R.id.btn_setting);
+		Button btn_learn = (Button) findViewById(R.id.btn_learn);
+		Button btn_replace = (Button) findViewById(R.id.btn_replace);
+		Button btn_exit = (Button) findViewById(R.id.btn_exit);
 		btn_set.setOnClickListener(this);
 		btn_learn.setOnClickListener(this);
 		btn_replace.setOnClickListener(this);
@@ -35,25 +35,25 @@ public class MainActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 
-		case R.id.button2:
+		case R.id.btn_setting:
 			Intent intent = new Intent(this, SettingActivity.class);
 			startActivity(intent);
 			break;
-		case R.id.button1:
+		case R.id.btn_learn:
 			// 学习模式
 			Utils.showNotification(this, R.drawable.notification, "学习模式",
 					"机器人管家向您请教");
 			SettingLoader.setModeType(this, SUBSTITUTE);// 0代表学习模式 1代表替身模式
 			STATE = LEARNING;
 			break;
-		case R.id.button3:
+		case R.id.btn_replace:
 			// 替身模式
 			Utils.showNotification(this, R.drawable.notification, "替身模式",
 					"机器人管家为您服务");
 			SettingLoader.setModeType(this, LEARNING);
 			STATE = SUBSTITUTE;
 			break;
-		case R.id.button4:
+		case R.id.btn_exit:
 			SMSApp.getApp(this).stopDataService();
 			finish();
 
