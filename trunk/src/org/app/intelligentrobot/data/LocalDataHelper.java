@@ -320,7 +320,8 @@ public class LocalDataHelper {
 		}
 		ArrayList<String> list = new ArrayList<String>();
 		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-			String dimsms = cursor.getString(cursor.getColumnIndexOrThrow(KEY_DIM_CONTENT));
+			String dimsms = cursor.getString(cursor
+					.getColumnIndexOrThrow(KEY_DIM_CONTENT));
 			Log.i(TAG, "dimsms is " + dimsms);
 			if (dimsms != null) {
 				list.add(dimsms);
@@ -329,14 +330,14 @@ public class LocalDataHelper {
 		return list;
 	}
 
-
 	public void saveOrUpdateDimsms(String dimcontent) {
 		ContentValues value = new ContentValues();
 		value.put(KEY_DIM_CONTENT, dimcontent);
-		if(dimExist(dimcontent)) {
-//			mSQLiteDatabase.update(DB_DIM_TABLE, value, KEY_DIM_CONTENT+" =? ", new String[]{dimcontent});
+		if (dimExist(dimcontent)) {
+			// mSQLiteDatabase.update(DB_DIM_TABLE, value,
+			// KEY_DIM_CONTENT+" =? ", new String[]{dimcontent});
 			Log.i(TAG, "update content is " + dimcontent);
-		}else {
+		} else {
 			mSQLiteDatabase.insert(DB_DIM_TABLE, KEY_DIM_ID, value);
 		}
 	}
@@ -346,8 +347,8 @@ public class LocalDataHelper {
 			return false;
 		}
 		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE, null,
-				KEY_DIM_CONTENT + "=?", new String[] { dimcontent }, null, null,
-				null);
+				KEY_DIM_CONTENT + "=?", new String[] { dimcontent }, null,
+				null, null);
 
 		boolean result = false;
 		if (cursor != null) {
@@ -364,31 +365,33 @@ public class LocalDataHelper {
 		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
-		if(Utils.isNullOrEmpty(content))  {
+		if (Utils.isNullOrEmpty(content)) {
 			return;
 		}
-		mSQLiteDatabase.delete(DB_DIM_TABLE, KEY_DIM_CONTENT+"=?", new String[]{content});
+		mSQLiteDatabase.delete(DB_DIM_TABLE, KEY_DIM_CONTENT + "=?",
+				new String[] { content });
 	}
-	
-	
-	public void saveOrUpdateKeyword(String ask,String answer) {
+
+	public static void saveOrUpdateKeyword(String ask, String answer) {
 		ContentValues value = new ContentValues();
 		value.put(KEY_KEYWORDS_CONTENT, ask);
 		value.put(KEY_KEYWORDS_ANSWERS, answer);
-		if(keywordExist(ask)) {
-//			mSQLiteDatabase.update(DB_DIM_TABLE, value, KEY_DIM_CONTENT+" =? ", new String[]{dimcontent});
+		if (keywordExist(ask)) {
+			// mSQLiteDatabase.update(DB_DIM_TABLE, value,
+			// KEY_DIM_CONTENT+" =? ", new String[]{dimcontent});
 			Log.i(TAG, "update ask is " + ask + " answer is " + answer);
-		}else {
+		} else {
 			mSQLiteDatabase.insert(DB_KEYWORDS_TABLE, KEY_KEYWORDS_ID, value);
 		}
 	}
-	
-	public ArrayList<AskKeyWordEntity> loadKeyword() {
+
+	public static ArrayList<AskKeyWordEntity> loadKeyword() {
 		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
-		Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE,
-				new String[] { KEY_KEYWORDS_CONTENT,KEY_KEYWORDS_ANSWERS }, null, null, null, null, null);
+		Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE, new String[] {
+				KEY_KEYWORDS_CONTENT, KEY_KEYWORDS_ANSWERS }, null, null, null,
+				null, null);
 		Log.i(TAG, "count is " + cursor.getCount());
 		if (cursor == null || cursor.getCount() == 0) {
 			return null;
@@ -396,8 +399,10 @@ public class LocalDataHelper {
 		AskKeyWordEntity entity = null;
 		ArrayList<AskKeyWordEntity> list = new ArrayList<AskKeyWordEntity>();
 		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-			String ask = cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEYWORDS_CONTENT));
-			String answer = cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEYWORDS_ANSWERS));
+			String ask = cursor.getString(cursor
+					.getColumnIndexOrThrow(KEY_KEYWORDS_CONTENT));
+			String answer = cursor.getString(cursor
+					.getColumnIndexOrThrow(KEY_KEYWORDS_ANSWERS));
 			entity = new AskKeyWordEntity();
 			entity.setQuestion(ask);
 			entity.setAnswer(answer);
@@ -405,35 +410,38 @@ public class LocalDataHelper {
 		}
 		return list;
 	}
-	
-	public String loadAnswer(String ask) {
+
+	public static String loadAnswer(String ask) {
 		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
 		Cursor cursor = mSQLiteDatabase.query(DB_KEYWORDS_TABLE,
-				new String[] { KEY_KEYWORDS_ANSWERS }, KEY_KEYWORDS_CONTENT+" =? ", new String[]{ask}, null, null, null);
+				new String[] { KEY_KEYWORDS_ANSWERS }, KEY_KEYWORDS_CONTENT
+						+ " =? ", new String[] { ask }, null, null, null);
 		Log.i(TAG, "count is " + cursor.getCount());
 		if (cursor == null || cursor.getCount() == 0) {
 			return null;
 		}
 		cursor.moveToFirst();
-		return cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEYWORDS_ANSWERS));
-	
+		return cursor.getString(cursor
+				.getColumnIndexOrThrow(KEY_KEYWORDS_ANSWERS));
+
 	}
-	
-	public void deleteKeyword(String ask) {
+
+	public static void deleteKeyword(String ask) {
 		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
-		if(Utils.isNullOrEmpty(ask))  {
+		if (Utils.isNullOrEmpty(ask)) {
 			return;
 		}
-		mSQLiteDatabase.delete(DB_KEYWORDS_TABLE, KEY_KEYWORDS_CONTENT+"=?", new String[]{ask});
+		mSQLiteDatabase.delete(DB_KEYWORDS_TABLE, KEY_KEYWORDS_CONTENT + "=?",
+				new String[] { ask });
 	}
 
 	public boolean dimExist() {
-		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE, null,null,null, null, null,
-				null);
+		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE, null, null, null,
+				null, null, null);
 
 		boolean result = false;
 		if (cursor != null) {
@@ -469,10 +477,10 @@ public class LocalDataHelper {
 						if (keywordExist(keyword)) {
 							Log.i(TAG, "keyword is exist");
 						} else {
-							if (mSQLiteDatabase.insert(DB_DIM_TABLE, null,
-									cv) != -1) {
+							if (mSQLiteDatabase.insert(DB_DIM_TABLE, null, cv) != -1) {
 								Log.i(TAG,
-										"keyword is "+ cv.getAsString(KEY_DIM_CONTENT));
+										"keyword is "
+												+ cv.getAsString(KEY_DIM_CONTENT));
 							} else {
 								Log.i(TAG, "Error while insert new record :"
 										+ cv.getAsString(KEY_DIM_CONTENT));
@@ -489,6 +497,5 @@ public class LocalDataHelper {
 			}
 		}
 	}
-	
 
 }
