@@ -332,7 +332,8 @@ public class LocalDataHelper {
 		ContentValues value = new ContentValues();
 		value.put(KEY_DIM_CONTENT, dimcontent);
 		if(dimExist(dimcontent)) {
-			mSQLiteDatabase.update(DB_DIM_TABLE, value, KEY_DIM_CONTENT+" =? ", new String[]{dimcontent});
+//			mSQLiteDatabase.update(DB_DIM_TABLE, value, KEY_DIM_CONTENT+" =? ", new String[]{dimcontent});
+			Log.i(TAG, "update content is " + dimcontent);
 		}else {
 			mSQLiteDatabase.insert(DB_DIM_TABLE, KEY_DIM_ID, value);
 		}
