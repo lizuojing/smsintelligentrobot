@@ -312,18 +312,56 @@ public class LocalDataHelper {
 		}
 		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE,
 				new String[] { KEY_DIM_CONTENT }, null, null, null, null, null);
+		Log.i(TAG, "count is " + cursor.getCount());
 		if (cursor == null || cursor.getCount() == 0) {
 			return null;
 		}
 		ArrayList<String> list = new ArrayList<String>();
 		for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-			String dimsms = cursor.getString(cursor
-					.getColumnIndexOrThrow(KEY_DIM_CONTENT));
+			String dimsms = cursor.getString(cursor.getColumnIndexOrThrow(KEY_DIM_CONTENT));
+			Log.i(TAG, "dimsms is " + dimsms);
 			if (dimsms != null) {
 				list.add(dimsms);
 			}
 		}
 		return list;
+	}
+
+
+	public void saveOrUpdateDimsms(String dimcontent) {
+		ContentValues value = new ContentValues();
+		value.put(KEY_DIM_CONTENT, dimcontent);
+		if(dimExist(dimcontent)) {
+			mSQLiteDatabase.update(DB_DIM_TABLE, value, KEY_DIM_CONTENT+" =? ", new String[]{dimcontent});
+		}else {
+			mSQLiteDatabase.insert(DB_DIM_TABLE, KEY_DIM_ID, value);
+		}
+	}
+
+	private boolean dimExist(String dimcontent) {
+		if (dimcontent == null) {
+			return false;
+		}
+		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE, null,
+				KEY_DIM_CONTENT + "=?", new String[] { dimcontent }, null, null,
+				null);
+
+		boolean result = false;
+		if (cursor != null) {
+			if (cursor.getCount() > 0) {
+				result = true;
+			}
+			cursor.close();
+		}
+
+		return result;
+	}
+
+	public void deleteDimsms(String content) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+			open();
+		}
+		mSQLiteDatabase.delete(DB_DIM_TABLE, KEY_DIM_CONTENT+"=?", new String[]{content});
 	}
 
 }
