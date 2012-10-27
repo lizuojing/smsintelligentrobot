@@ -77,7 +77,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 		ArrayList<Conversation> messageAnswer = SMSApp.getApp(context)
 				.getService().getList();
 		Log.e("收到的短信：:", content);
-		minRate = content.length();
+		minRate = content.length() / 2;
 		for (Conversation conversation : messageAnswer) {
 			String a = conversation.getReceivecontent();
 
@@ -86,7 +86,7 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 			if (rate < minRate) {
 				minRate = rate;
 				temp = conversation;
-				Log.e("配对字符串：",
+				Log.e("学习库里配对字符串：",
 						"比率 " + rate + "   " + a + " 对应回答："
 								+ temp.getSendcontent());
 			}
