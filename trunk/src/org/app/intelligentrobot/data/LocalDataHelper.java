@@ -134,11 +134,16 @@ public class LocalDataHelper {
 		Log.i(TAG, "insert is " + insert);
 	}
 
+	public boolean islearning;
+
 	public void saveOrUpdateSendSMS(ArrayList<Conversation> list) {
+		if (islearning) {
+			return;
+		}
+		islearning = true;
 		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
-		Log.i(TAG, "list size is " + (list != null ? list.size() : 0));
 		List<ContentValues> cvList = new ArrayList<ContentValues>();
 		for (Conversation sms : list) {
 			ContentValues cv = new ContentValues();
@@ -159,14 +164,11 @@ public class LocalDataHelper {
 					for (int j = 0; j < cvList.size(); j++) {
 						ContentValues cv = cvList.get(j);
 						String send = cv.getAsString(KEY_SMS_SEND_SENDCONTENT);
-						Log.i(TAG, "smsid is " + send);
+						// Log.i(TAG, "smsid is " + send);
 						if (smsExist(send)) {
 							if (mSQLiteDatabase.update(DB_SMS_SEND_TABLE, cv,
 									KEY_SMS_SEND_SENDCONTENT + "=?",
 									new String[] { send }) != -1) {
-								Log.i(TAG,
-										"Update new record: Key:"
-												+ cv.getAsString(KEY_SMS_SEND_NUMBER));
 							} else {
 								Log.i(TAG, "Error while insert new record :"
 										+ cv.getAsString(KEY_SMS_SEND_NUMBER));
@@ -188,11 +190,13 @@ public class LocalDataHelper {
 					mSQLiteDatabase.setTransactionSuccessful();
 				} catch (RuntimeException e) {
 					mSQLiteDatabase.endTransaction();
+					e.printStackTrace();
 					throw e;
 				}
 				mSQLiteDatabase.endTransaction();
 			}
 		}
+		islearning = false;
 	}
 
 	private boolean smsExist(String send) {
@@ -263,7 +267,9 @@ public class LocalDataHelper {
 					mSQLiteDatabase.setTransactionSuccessful();
 				} catch (RuntimeException e) {
 					mSQLiteDatabase.endTransaction();
+					e.printStackTrace();
 					throw e;
+
 				}
 				mSQLiteDatabase.endTransaction();
 			}
@@ -440,6 +446,9 @@ public class LocalDataHelper {
 	}
 
 	public boolean dimExist() {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+			open();
+		}
 		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE, null, null, null,
 				null, null, null);
 
