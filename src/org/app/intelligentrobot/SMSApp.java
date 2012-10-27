@@ -1,6 +1,7 @@
 package org.app.intelligentrobot;
 
 import org.app.intelligentrobot.service.SMSService;
+import org.app.intelligentrobot.utils.Utils;
 
 import android.app.Application;
 import android.content.ComponentName;
@@ -73,6 +74,7 @@ public class SMSApp extends Application {
 			unbindService(mConnection);
 			mConnection = null;
 			stopService(new Intent(this, SMSService.class));
+			Utils.deleteNotification(mContext, R.drawable.notification);
 		}
 	}
 }

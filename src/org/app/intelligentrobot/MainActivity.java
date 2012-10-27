@@ -1,13 +1,11 @@
 package org.app.intelligentrobot;
 
 import org.app.intelligentrobot.data.SettingLoader;
-import org.app.intelligentrobot.entity.CosineSimilarAlgorithm;
 import org.app.intelligentrobot.utils.Utils;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;

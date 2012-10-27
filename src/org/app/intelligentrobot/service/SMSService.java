@@ -250,11 +250,16 @@ public class SMSService extends Service {
 				}
 				line = bf.readLine();
 				if (null != line) {
-					String[] split = line.split(";");
-					entity = new AskKeyWordEntity();
-					entity.setQuestion(split[0]);
-					entity.setAnswer(split[1]);
-					list.add(entity);
+					try {
+						String[] split = line.split(";");
+						entity = new AskKeyWordEntity();
+						entity.setQuestion(split[0]);
+						entity.setAnswer(split[1]);
+						list.add(entity);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 				}
 			}
 			bf.close();
