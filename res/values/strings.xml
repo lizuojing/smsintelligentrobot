@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, IntelligentRobotActivity!</string>
-    <string name="app_name">IntelligentRobot</string>
+    <string name="app_name">替身机器人</string>
     <string name="setting">设置</string>
     <string name="learn_mode">学习模式</string>
     <string name="replacement_mode">替身模式</string>
