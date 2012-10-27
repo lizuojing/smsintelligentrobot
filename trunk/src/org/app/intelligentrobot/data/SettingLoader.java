@@ -9,6 +9,7 @@ public class SettingLoader {
 	private static final String SETTING = "setting";
 	private static final String KNOWN = "set_known";
 	private static final String MODETYPE = "set_mode";
+	private static final String DEFAULTSMS = "set_default";
 
 	public static void setKnown(Context context, boolean known) {
 		SharedPreferences preferences = context.getSharedPreferences(SETTING,Context.MODE_PRIVATE);
@@ -28,8 +29,27 @@ public class SettingLoader {
 		edit.putInt(MODETYPE, mode);
 		edit.commit();
 	}
+	/**
+	 * -1代表没有设置任何模式  
+	 * 0代表学习模式  
+	 * 1代表替身模式 
+	 * @param context
+	 * @return
+	 */
 	public static int getModeType(Context context) {
 		SharedPreferences preferences = context.getSharedPreferences(SETTING,Context.MODE_PRIVATE);
-		return preferences.getInt(MODETYPE, 0);
+		return preferences.getInt(MODETYPE, -1);
+	}
+
+	public static void setDefaultSMS(Context context,String defaultSms) {
+		SharedPreferences preferences = context.getSharedPreferences(SETTING,Context.MODE_PRIVATE);
+		Editor edit = preferences.edit();
+		edit.putString(DEFAULTSMS, defaultSms);
+		edit.commit();
+	}
+	
+	public static String getDefaultSMS(Context context) {
+		SharedPreferences preferences = context.getSharedPreferences(SETTING,Context.MODE_PRIVATE);
+		return preferences.getString(DEFAULTSMS,null);
 	}
 }
