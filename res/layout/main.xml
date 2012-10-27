@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#ffffff" >
+    android:background="@drawable/background" >
 
     <Button
         android:id="@+id/btn_learn"
@@ -44,6 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/btn_replace"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/images"/>
+        android:layout_marginTop="5dip"
+        android:visibility="gone"
+        android:src="@drawable/images" />
 
 </RelativeLayout>
