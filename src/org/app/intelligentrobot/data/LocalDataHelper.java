@@ -68,10 +68,11 @@ public class LocalDataHelper {
 			+ KEY_SMS_SEND_RECEIVETIME + " INTEGER," + KEY_SMS_SEND_NUMBER
 			+ " TEXT )";
 
-	// sql for create SMS table
+	// sql for create KEYWORD table
 	private static final String CREATE_KEYWORD_TABLE = "CREATE TABLE "
 			+ DB_KEYWORDS_TABLE + " (" + KEY_KEYWORDS_ID
-			+ " INTEGER PRIMARY KEY," + KEY_KEYWORDS_CONTENT + " TEXT )";
+			+ " INTEGER PRIMARY KEY," + KEY_KEYWORDS_CONTENT + " TEXT,"
+			+ KEY_KEYWORDS_ANSWERS + " TEXT)";
 
 	// sql for create dim table
 	private static final String CREATE_DIM_TABLE = "CREATE TABLE "
@@ -198,8 +199,8 @@ public class LocalDataHelper {
 			return false;
 		}
 		Cursor cursor = mSQLiteDatabase.query(DB_SMS_SEND_TABLE, null,
-				KEY_SMS_SEND_SENDCONTENT + "=?", new String[] { send }, null, null,
-				null);
+				KEY_SMS_SEND_SENDCONTENT + "=?", new String[] { send }, null,
+				null, null);
 
 		boolean result = false;
 		if (cursor != null) {
