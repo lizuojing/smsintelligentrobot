@@ -11,5 +11,8 @@
     <string name="set_refuse">设置拒接电话的默认短信</string>
     <string name="set_dimsms">设置模糊短信</string>
     <string name="set_keywords">设置关键字及应答</string>
+    <string name="defaultsms">默认短信</string>
+    <string name="save">保存</string>
+    <string name="create">新建</string>
 
 </resources>
