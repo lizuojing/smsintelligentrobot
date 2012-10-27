@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import org.app.intelligentrobot.SMSApp;
 import org.app.intelligentrobot.data.LocalDataHelper;
 import org.app.intelligentrobot.data.SettingLoader;
+import org.app.intelligentrobot.entity.AskKeyWordEntity;
 import org.app.intelligentrobot.entity.Conversation;
 import org.app.intelligentrobot.receceiver.SmsObserver;
 
@@ -37,6 +38,7 @@ public class SMSService extends Service {
 	private static final String TAG = "SMSService";
 	private static final Uri SMS_URI = Uri.parse("content://sms/");
 	private static final String KEYWORDSPATH = "keywords.txt";
+	private static final String DIM = "dim.txt";
 	private static ArrayList<ServiceHandler> mServiceHandlers = new ArrayList<ServiceHandler>();
 	public static Context context;
 
@@ -117,8 +119,80 @@ public class SMSService extends Service {
 		if (SettingLoader.getDefaultSMS(context) == null) {
 			SettingLoader.setDefaultSMS(context, "我现在有点事，一会回你电话。");
 		}
+		
+		//初始化模糊短信
+		if(!dimExist()) {
+			initDim();
+		}
 	}
 
+	private boolean dimExist() {
+		if (mLocalDataHelper == null) {
+			mLocalDataHelper = new LocalDataHelper(context);
+		}
+		return mLocalDataHelper.dimExist();
+	}
+
+	private void initDim() {
+		new AsyncTask<Void, Integer, Long>() {
+
+			@Override
+			protected Long doInBackground(Void... params) {
+				Log.i(TAG, "dim is running");
+				if (mLocalDataHelper == null) {
+					mLocalDataHelper = new LocalDataHelper(context);
+				}
+				ArrayList<String> list = loadDims();
+				if (list != null) {
+					mLocalDataHelper.insertOrUpdateDim(list);
+				}
+				return null;
+			}
+
+
+		}.execute();
+
+	}
+
+	private ArrayList<String> loadDims() {
+		ArrayList<String> list = null;
+		AssetManager asset_manager = context.getAssets();
+
+		InputStream fis = null;
+		String line = null;
+		try {
+			fis = asset_manager.open(DIM,
+					AssetManager.ACCESS_STREAMING);
+			BufferedReader bf = new BufferedReader(new InputStreamReader(fis,
+					"UTF-8"));
+			line = bf.readLine();
+			while (null != line) {
+				if (list == null) {
+					list = new ArrayList<String>();
+				}
+				line = bf.readLine();
+				if (null != line) {
+					list.add(line);
+				}
+			}
+			bf.close();
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (null != fis) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return list;
+	}
+	
 	public void copySendSMS() {
 		new AsyncTask<Void, Integer, Long>() {
 
@@ -145,7 +219,7 @@ public class SMSService extends Service {
 				if (mLocalDataHelper == null) {
 					mLocalDataHelper = new LocalDataHelper(context);
 				}
-				ArrayList<String> list = loadKeywords();
+				ArrayList<AskKeyWordEntity> list = loadKeywords();
 				if (list != null) {
 					mLocalDataHelper.insertOrUpdateKeywords(list);
 				}
@@ -156,13 +230,14 @@ public class SMSService extends Service {
 
 	}
 
-	private ArrayList<String> loadKeywords() {
+	private ArrayList<AskKeyWordEntity> loadKeywords() {
 
-		ArrayList<String> list = null;
+		ArrayList<AskKeyWordEntity> list = null;
 		AssetManager asset_manager = context.getAssets();
 
 		InputStream fis = null;
 		String line = null;
+		AskKeyWordEntity entity = null;
 		try {
 			fis = asset_manager.open(KEYWORDSPATH,
 					AssetManager.ACCESS_STREAMING);
@@ -171,11 +246,14 @@ public class SMSService extends Service {
 			line = bf.readLine();
 			while (null != line) {
 				if (list == null) {
-					list = new ArrayList<String>();
+					list = new ArrayList<AskKeyWordEntity>();
 				}
 				line = bf.readLine();
 				if (null != line) {
-					list.add(line);
+					String[] split = line.split(";");
+					entity.setQuestion(split[0]);
+					entity.setAnswer(split[1]);
+					list.add(entity);
 				}
 			}
 			bf.close();

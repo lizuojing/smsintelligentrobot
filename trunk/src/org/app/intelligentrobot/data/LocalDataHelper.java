@@ -214,15 +214,16 @@ public class LocalDataHelper {
 		return result;
 	}
 
-	public void insertOrUpdateKeywords(ArrayList<String> list) {
+	public void insertOrUpdateKeywords(ArrayList<AskKeyWordEntity> list) {
 		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
 		Log.i(TAG, "list size is " + (list != null ? list.size() : 0));
 		List<ContentValues> cvList = new ArrayList<ContentValues>();
-		for (String keyword : list) {
+		for (AskKeyWordEntity entity : list) {
 			ContentValues cv = new ContentValues();
-			cv.put(KEY_KEYWORDS_CONTENT, keyword);
+			cv.put(KEY_KEYWORDS_CONTENT, entity.question);
+			cv.put(KEY_KEYWORDS_ANSWERS, entity.answer);
 			cvList.add(cv);
 		}
 
@@ -428,6 +429,65 @@ public class LocalDataHelper {
 			return;
 		}
 		mSQLiteDatabase.delete(DB_KEYWORDS_TABLE, KEY_KEYWORDS_CONTENT+"=?", new String[]{ask});
+	}
+
+	public boolean dimExist() {
+		Cursor cursor = mSQLiteDatabase.query(DB_DIM_TABLE, null,null,null, null, null,
+				null);
+
+		boolean result = false;
+		if (cursor != null) {
+			if (cursor.getCount() > 0) {
+				result = true;
+			}
+			cursor.close();
+		}
+
+		return result;
+	}
+
+	public void insertOrUpdateDim(ArrayList<String> list) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+			open();
+		}
+		Log.i(TAG, "list size is " + (list != null ? list.size() : 0));
+		List<ContentValues> cvList = new ArrayList<ContentValues>();
+		for (String keyword : list) {
+			ContentValues cv = new ContentValues();
+			cv.put(KEY_DIM_CONTENT, keyword);
+			cvList.add(cv);
+		}
+
+		if (mSQLiteDatabase != null) {
+			synchronized (mSQLiteDatabase) {
+
+				mSQLiteDatabase.beginTransaction();
+				try {
+					for (int j = 0; j < cvList.size(); j++) {
+						ContentValues cv = cvList.get(j);
+						String keyword = cv.getAsString(KEY_DIM_CONTENT);
+						if (keywordExist(keyword)) {
+							Log.i(TAG, "keyword is exist");
+						} else {
+							if (mSQLiteDatabase.insert(DB_DIM_TABLE, null,
+									cv) != -1) {
+								Log.i(TAG,
+										"keyword is "+ cv.getAsString(KEY_DIM_CONTENT));
+							} else {
+								Log.i(TAG, "Error while insert new record :"
+										+ cv.getAsString(KEY_DIM_CONTENT));
+
+							}
+						}
+					}
+					mSQLiteDatabase.setTransactionSuccessful();
+				} catch (RuntimeException e) {
+					mSQLiteDatabase.endTransaction();
+					throw e;
+				}
+				mSQLiteDatabase.endTransaction();
+			}
+		}
 	}
 	
 
