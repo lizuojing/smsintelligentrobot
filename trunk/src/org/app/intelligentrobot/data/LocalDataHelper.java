@@ -305,7 +305,7 @@ public class LocalDataHelper {
 		return "返回一个关键值";
 	}
 
-	public ArrayList<String> loadDimList() {
+	public static ArrayList<String> loadDimList() {
 		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}

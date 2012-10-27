@@ -59,10 +59,13 @@ public class SMSBroadcastReceiver extends BroadcastReceiver {
 			if (messageAnswer != null) {
 				answer = answer + messageAnswer;
 			} else {
-
+				ArrayList<String> strings = LocalDataHelper.loadDimList();
+				int readomWordIndex = (int) (Math.random() * strings.size());
+				answer = answer + strings.get(readomWordIndex);
 			}
 
 		}
+		Log.e("answer:", "" + answer);
 		return answer;
 	}
 

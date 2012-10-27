@@ -109,7 +109,7 @@ public class SMSService extends Service {
 
 	private void initData() {
 		// 初始化关键字词库
-//		initKeyWords();
+		// initKeyWords();
 		// 拷贝已发送短信内容
 		copySendSMS();
 	}
@@ -302,8 +302,6 @@ public class SMSService extends Service {
 					String tempbody = tempCursor.getString(tempbodyIndex);
 					String temptype = tempCursor.getString(temptypeIndex);
 					String temptime = tempCursor.getString(temptimeIndex);
-					Log.i(TAG, "time is " + time + " temptime is " + temptime
-							+ " tempid " + tempid);
 					Conversation conversation = new Conversation();
 					conversation.setSmsid(tempid);
 					conversation.setPnum(number);
