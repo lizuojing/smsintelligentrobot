@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.app.intelligentrobot.entity.AskKeyWordEntity;
 import org.app.intelligentrobot.entity.Conversation;
+import org.app.intelligentrobot.utils.Utils;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -362,6 +363,9 @@ public class LocalDataHelper {
 		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
 			open();
 		}
+		if(Utils.isNullOrEmpty(content))  {
+			return;
+		}
 		mSQLiteDatabase.delete(DB_DIM_TABLE, KEY_DIM_CONTENT+"=?", new String[]{content});
 	}
 	
@@ -415,5 +419,16 @@ public class LocalDataHelper {
 		return cursor.getString(cursor.getColumnIndexOrThrow(KEY_KEYWORDS_ANSWERS));
 	
 	}
+	
+	public void deleteKeyword(String ask) {
+		if (mSQLiteDatabase == null || !mSQLiteDatabase.isOpen()) {
+			open();
+		}
+		if(Utils.isNullOrEmpty(ask))  {
+			return;
+		}
+		mSQLiteDatabase.delete(DB_KEYWORDS_TABLE, KEY_KEYWORDS_CONTENT+"=?", new String[]{ask});
+	}
+	
 
 }
