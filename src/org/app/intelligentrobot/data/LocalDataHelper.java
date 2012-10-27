@@ -145,7 +145,8 @@ public class LocalDataHelper {
 			open();
 		}
 		List<ContentValues> cvList = new ArrayList<ContentValues>();
-		for (Conversation sms : list) {
+		for(int i = (list.size()-1);i>=0;i--) {
+			Conversation sms = list.get(i);
 			ContentValues cv = new ContentValues();
 			cv.put(KEY_SMS_SEND_SMSID, sms.getSmsid());
 			cv.put(KEY_SMS_SEND_NUMBER, sms.getPnum());
@@ -166,14 +167,14 @@ public class LocalDataHelper {
 						String send = cv.getAsString(KEY_SMS_SEND_SENDCONTENT);
 						// Log.i(TAG, "smsid is " + send);
 						if (smsExist(send)) {
-							if (mSQLiteDatabase.update(DB_SMS_SEND_TABLE, cv,
+							/*if (mSQLiteDatabase.update(DB_SMS_SEND_TABLE, cv,
 									KEY_SMS_SEND_SENDCONTENT + "=?",
 									new String[] { send }) != -1) {
 							} else {
 								Log.i(TAG, "Error while insert new record :"
 										+ cv.getAsString(KEY_SMS_SEND_NUMBER));
 
-							}
+							}*/
 						} else {
 							if (mSQLiteDatabase.insert(DB_SMS_SEND_TABLE, null,
 									cv) != -1) {
