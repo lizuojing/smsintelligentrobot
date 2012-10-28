@@ -7,34 +7,50 @@
     <Button
         android:id="@+id/btn_learn"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@drawable/btn_bg"
         android:text="@string/learn_mode"
         android:textColor="#000000" />
 
     <Button
         android:id="@+id/btn_replace"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_above="@+id/btn_learn"
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@drawable/btn_bg"
         android:text="@string/replacement_mode"
         android:textColor="#000000" />
 
     <Button
         android:id="@+id/btn_setting"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_below="@+id/btn_learn"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@drawable/btn_bg"
         android:text="@string/setting"
         android:textColor="#000000" />
 
     <Button
         android:id="@+id/btn_exit"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_below="@+id/btn_setting"
+        android:layout_marginBottom="10dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="@drawable/btn_bg"
         android:text="@string/exit"
         android:textColor="#000000" />
 
@@ -45,7 +61,7 @@
         android:layout_above="@+id/btn_replace"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dip"
-        android:visibility="gone"
-        android:src="@drawable/images" />
+        android:src="@drawable/images"
+        android:visibility="gone" />
 
 </RelativeLayout>
