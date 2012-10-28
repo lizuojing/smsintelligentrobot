@@ -14,5 +14,6 @@
     <string name="defaultsms">默认短信</string>
     <string name="save">保存</string>
     <string name="create">新建</string>
+    <string name="notify">	欢迎使用替身模式，在替身模式下我将为您做以下服务：1，拒接所有来电，并自动帮您回复短信。2.自动帮你回复短信。短信内容先依照关键字内容给出，否则将从您的短信内容中查找到最匹配的回答进行回复。如果前两者都找不到合适内容，我将会用您设置的含糊短信来进行回复。</string>
 
 </resources>
