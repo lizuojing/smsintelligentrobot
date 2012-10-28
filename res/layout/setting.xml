@@ -2,14 +2,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="@drawable/setting"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dip"
+        android:layout_height="50dip"
+        android:layout_marginTop="50dip"
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
         android:background="@drawable/btn_bg" >
@@ -37,7 +37,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout2"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_marginTop="5dip"
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
@@ -55,8 +55,8 @@
             android:textSize="18sp" />
 
         <ImageView
-            android:layout_width="40dip"
-            android:layout_height="40dip"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:src="@drawable/right_arrow" />
@@ -65,7 +65,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout3"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_marginTop="5dip"
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
@@ -83,8 +83,8 @@
             android:textSize="18sp" />
 
         <ImageView
-            android:layout_width="40dip"
-            android:layout_height="40dip"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:src="@drawable/right_arrow" />
@@ -93,7 +93,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout4"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dip"
         android:layout_marginTop="5dip"
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
@@ -111,8 +111,8 @@
             android:textSize="18sp" />
 
         <ImageView
-            android:layout_width="40dip"
-            android:layout_height="40dip"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:src="@drawable/right_arrow" />
