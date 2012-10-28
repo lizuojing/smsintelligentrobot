@@ -200,7 +200,8 @@ public class SMSService extends Service {
 				if (mLocalDataHelper == null) {
 					mLocalDataHelper = new LocalDataHelper(context);
 				}
-				mLocalDataHelper.saveOrUpdateSendSMS(loadSendSMS());
+				list = loadSendSMS();
+				mLocalDataHelper.saveOrUpdateSendSMS(list);
 				return null;
 			}
 
